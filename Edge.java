@@ -36,7 +36,14 @@ public class Edge
 
     public Node getSource()        { return source; }
     public Node getSink()          { return sink; }
-    public int getWeight()        { return weight; }
+    public int getWeight()         { return weight; }
+
+//---------------------------------------------------------------------------
+    //SETTERS
+
+    public void setSource(Node inSource)        { source = inSource; }
+    public void setSink(Node inSink)            { sink = inSink; }
+    public void setWeight(int inWeight)         { weight = inWeight; }
 
 //---------------------------------------------------------------------------
     //NAME: toString
@@ -46,8 +53,8 @@ public class Edge
     public String toString()
     {
         String state = "WEIGHT: " + weight + "\n";
-        state += "SOURCE: " + source.toString();
-        state += "SINK: " + sink.toString();
+        state += "SOURCE: " + source.getName();
+        state += "SINK: " + sink.getName();
         return state;
     }
 //---------------------------------------------------------------------------
