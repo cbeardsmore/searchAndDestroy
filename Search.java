@@ -15,6 +15,12 @@ import java.util.Collections;
 
 public class Search
 {
+//---------------------------------------------------------------------------
+    //NAME: dfs()
+    //IMPORT: graph (Graph), initial (int), goal (int)
+    //EXPORT: path to goal (List<Node>)
+    //PURPOSE: Perform depth-first search on a graph
+
     public static List<Node> dfs( Graph graph, int initial, int goal )
     {
         boolean done = false;
@@ -55,57 +61,65 @@ public class Search
     }
 
 //---------------------------------------------------------------------------
+    //NAME: bfs()
+    //IMPORT: graph (Graph), initial (int), goal (int)
+    //EXPORT: path to goal (List<Node>)
+    //PURPOSE: Perform breadth-first search on a graph
 
-public static List<Node> bfs( Graph graph, int initial, int goal )
-{
-    boolean done = false;
-    List<Node> explored = new LinkedList<>();
-    Queue<Node> queue = new LinkedList<>();
-    queue.add( graph.getNode(initial) );
-
-    // LOOP UNTIL GOAL FOUND - DONE SET TO TRUE
-    // OR STACK IS EMPTY - ALL PATHS EXPORED, NO SOLUTION
-    while ( ( !queue.isEmpty() ) && ( !done ) )
+    public static List<Node> bfs( Graph graph, int initial, int goal )
     {
-        //POP THE TOP NODE FROM THE STACK
-        Node next = queue.remove();
+        boolean done = false;
+        List<Node> explored = new LinkedList<>();
+        Queue<Node> queue = new LinkedList<>();
+        queue.add( graph.getNode(initial) );
 
-        System.out.println( next.getName() );
-
-        //ADD NEXT NODE TO THE EXPLORED LIST
-        explored.add(next);
-
-        //ADD ALL CONNECTED NODES TO THE STACK
-        List<Node> nodes = next.getNodes();
-        for ( Node child : nodes  )
+        // LOOP UNTIL GOAL FOUND - DONE SET TO TRUE
+        // OR STACK IS EMPTY - ALL PATHS EXPORED, NO SOLUTION
+        while ( ( !queue.isEmpty() ) && ( !done ) )
         {
-            //GOAL TEST
-            if ( child == graph.getNode(goal) )
-                done = true;
+            //POP THE TOP NODE FROM THE STACK
+            Node next = queue.remove();
 
-            //DON'T BACKTRACK
-            if ( !explored.contains(child) )
+            System.out.println( next.getName() );
+
+            //ADD NEXT NODE TO THE EXPLORED LIST
+            explored.add(next);
+
+            //ADD ALL CONNECTED NODES TO THE STACK
+            List<Node> nodes = next.getNodes();
+            for ( Node child : nodes  )
             {
-                child.setParent( next );
-                queue.add( child );
+                //GOAL TEST
+                if ( child == graph.getNode(goal) )
+                    done = true;
+
+                //DON'T BACKTRACK
+                if ( !explored.contains(child) )
+                {
+                    child.setParent( next );
+                    queue.add( child );
+                }
             }
         }
 
+        return createPath( graph.getNode(goal) );
     }
 
-    return createPath( graph.getNode(goal) );
-}
-
 //---------------------------------------------------------------------------
-
+    //NAME: createPath()
+    //IMPORT: goal (Node)
+    //EXPORT: path to goal (List<Node>)
+    //PURPOSE: Backtracks from goal to determine path to the goal
 
     private static List<Node> createPath( Node goal )
     {
         Node next = goal;
         List<Node> path = new LinkedList<>();
 
+        // LOOP UNTIL THE INITIAL NODE IS REACHED
         while ( next != null )
         {
+            // ADD TO THE PATH, MOVE TO THE NEXT PARENT
             path.add( 0, next );
             next = next.getParent();
         }
