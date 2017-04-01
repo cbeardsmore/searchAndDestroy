@@ -16,6 +16,28 @@ import java.util.Collections;
 public class Search
 {
 //---------------------------------------------------------------------------
+    //NAME: beamSearch()
+    //IMPORT: graph (Graph), initial (int), goal (int), k (int)
+    //EXPORT: path to goal (List<Node>)
+    //PURPOSE: Perform beam informed search on the graph
+
+    public static List<Node> beamSearch( Graph graph, int initial, int goal, int k )
+    {
+        return null;
+    }
+
+//---------------------------------------------------------------------------
+    //NAME: alimSearch()
+    //IMPORT: graph (Graph), initial (int), goal (int)
+    //EXPORT: path to goal (List<Node>)
+    //PURPOSE: Perform memory limited A* search on a graph
+
+    public static List<Node> alimSearch( Graph graph, int initial, int goal )
+    {
+        return null;
+    }
+
+//---------------------------------------------------------------------------
     //NAME: dfs()
     //IMPORT: graph (Graph), initial (int), goal (int)
     //EXPORT: path to goal (List<Node>)

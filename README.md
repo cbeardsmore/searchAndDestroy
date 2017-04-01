@@ -6,11 +6,12 @@
 
 #####Purpose
 
-Various implementations of search techniques
+Implementation of both Beam Informed search and Memory Bounded A* search
 
 ##### File List
 
 ```
-../???
+./Documentation
+./???
 ```
 
