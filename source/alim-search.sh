@@ -1,3 +1,3 @@
 #/bin/bash
 
-java Searcher -alim
+java Searcher -alim $1 $2 $3

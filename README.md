@@ -8,10 +8,30 @@
 
 Implementation of both Beam Informed search and Memory Bounded A* search
 
+#####How to Run
+
+######Beam Search
+
+Run the script named with the following parameters:
+
+```
+beam-search <initial node> <goal node> <graph file> <k>
+```
+
+
+######Memory Limited A* Search
+
+Run the script named with the following parameters:
+
+```
+alim-search <initial node> <goal node> <graph file>
+```
+
 ##### File List
 
 ```
-./Documentation
-./???
+./documentation - project report 
+./graphs - test graph files
+./source - all source code 
 ```
 
