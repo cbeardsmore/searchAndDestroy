@@ -50,6 +50,49 @@ public class FileIO
     }
 
 //---------------------------------------------------------------------------
+    //NAME: readHeuristic()
+    //IMPORT: filename (String)
+    //PURPOSE: Read in heuristic details from given file
+
+    public void readHeuristic( String filename )
+    {
+        // OPEN FILE
+        File file = new File( filename );
+
+        try
+        {
+            // PARSE EACH LINE INDIVIDUALLY
+            Scanner sc = new Scanner( file );
+            while ( sc.hasNextLine() )
+                parseHeuristic( sc.nextLine() );
+        }
+        catch ( FileNotFoundException e )
+        {
+            e.printStackTrace();
+        }
+    }
+
+//---------------------------------------------------------------------------
+    //NAME: parseLine()
+    //IMPORT: line (String)
+    //PURPOSE: Parse a given line with format <NODE WEIGHT>
+
+    public void parseHeuristic( String line )
+    {
+        String[] tokens = line.split(" ");
+
+        if ( tokens.length != 2 )
+            throw new IllegalArgumentException("FILE FORMAT INVALID");
+
+        // SIMPLIFY NAMING
+        String nodeName = tokens[0];
+        int weight = Integer.parseInt( tokens[1] );
+
+        Node node = graph.getNode( nodeName );
+        node.setHeuristic( weight );
+    }
+
+//---------------------------------------------------------------------------
     //NAME: parseLine()
     //IMPORT: line (String)
     //PURPOSE: Parse a given line with format <SOURCE SINK WEIGHT>
@@ -62,8 +105,8 @@ public class FileIO
             throw new IllegalArgumentException("FILE FORMAT INVALID");
 
         // SIMPLIFY NAMING
-        int source = Integer.parseInt( tokens[0] );
-        int sink = Integer.parseInt( tokens[1] );
+        String source = tokens[0];
+        String sink = tokens[1];
         int weight = Integer.parseInt( tokens[2] );
 
         // GET REFERENCES TO THE NODES
@@ -82,7 +125,7 @@ public class FileIO
             graph.addNode( sinkNode );
         }
 
-        // ADD THE NEW EDGE INTO THE GRAPH 
+        // ADD THE NEW EDGE INTO THE GRAPH
         Edge edge = new Edge( sourceNode, sinkNode, weight );
         graph.addEdge( edge );
     }

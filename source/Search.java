@@ -21,9 +21,43 @@ public class Search
     //EXPORT: path to goal (List<Node>)
     //PURPOSE: Perform beam informed search on the graph
 
-    public static List<Node> beamSearch( Graph graph, int initial, int goal, int k )
+    public static List<Node> beamSearch( Graph graph, String initial, String goal, int k )
     {
-        return null;
+        boolean done = false;
+        List<Node> explored = new LinkedList<>();
+        Stack<Node> stack = new Stack<>();
+        stack.push( graph.getNode(initial) );
+
+        // LOOP UNTIL GOAL FOUND - DONE SET TO TRUE
+        // OR STACK IS EMPTY - ALL PATHS EXPORED, NO SOLUTION
+        while ( ( !stack.empty() ) && ( !done ) )
+        {
+            //POP THE TOP NODE FROM THE STACK
+            Node next = stack.pop();
+
+            //ADD NEXT NODE TO THE EXPLORED LIST
+            explored.add(next);
+
+            //ADD ALL CONNECTED NODES TO THE STACK
+            List<Node> nodes = next.getNodes();
+            Collections.reverse( nodes );
+            for ( Node child : nodes  )
+            {
+                //GOAL TEST
+                if ( child == graph.getNode(goal) )
+                    done = true;
+
+                //DON'T BACKTRACK
+                if ( !explored.contains(child) )
+                {
+                    child.setParent( next );
+                    stack.push( child );
+                }
+            }
+
+        }
+
+        return createPath( graph.getNode(goal) );
     }
 
 //---------------------------------------------------------------------------
@@ -43,7 +77,7 @@ public class Search
     //EXPORT: path to goal (List<Node>)
     //PURPOSE: Perform depth-first search on a graph
 
-    public static List<Node> dfs( Graph graph, int initial, int goal )
+    public static List<Node> dfs( Graph graph, String initial, String goal )
     {
         boolean done = false;
         List<Node> explored = new LinkedList<>();
@@ -88,7 +122,7 @@ public class Search
     //EXPORT: path to goal (List<Node>)
     //PURPOSE: Perform breadth-first search on a graph
 
-    public static List<Node> bfs( Graph graph, int initial, int goal )
+    public static List<Node> bfs( Graph graph, String initial, String goal )
     {
         boolean done = false;
         List<Node> explored = new LinkedList<>();

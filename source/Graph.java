@@ -16,7 +16,7 @@ public class Graph
 {
     //CLASSFIELDS
     private List<Edge> edgeList;
-    private Map<Integer,Node> nodeMap;
+    private Map<String,Node> nodeMap;
 
 //---------------------------------------------------------------------------
     //DEFAULT CONSTRUCTOR
@@ -24,15 +24,15 @@ public class Graph
     public Graph()
     {
         edgeList = new LinkedList<Edge>();
-        nodeMap = new HashMap<Integer,Node>();
+        nodeMap = new HashMap<String,Node>();
     }
 
 //---------------------------------------------------------------------------
     //NAME: getNode()
-    //IMPORT: inName (int)
+    //IMPORT: inName (String)
     //PURPOSE: Get a node from the map given its integer name
 
-    public Node getNode( int inName )
+    public Node getNode( String inName )
     {
         return nodeMap.get(inName);
     }
@@ -77,10 +77,12 @@ public class Graph
         }
 
         state += "NODES:\n------\n";
-        for (Map.Entry<Integer, Node> entry : nodeMap.entrySet())
+        for (Map.Entry<String, Node> entry : nodeMap.entrySet())
         {
-            state += entry.getValue().getName() + " -> ";
-            state += entry.getValue().connectedTo() + "\n";
+            Node value = entry.getValue();
+            state += value.getName() + " -> ";
+            state += value.connectedTo() + " -> ";
+            state += value.getHeuristic() + "\n";
         }
 
         return state;

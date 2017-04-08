@@ -14,34 +14,38 @@ import java.util.Collections;
 public class Node implements Comparable<Node>
 {
     //CLASSFIELDS
-    private int name;
+    private String name;
     private Node parent;
     private List<Node> nodeList;
     private List<Edge> edgeList;
+    private int heuristic;
 
 //---------------------------------------------------------------------------
     //ALTERNATE CONSTRUCTOR
 
-    public Node( int inName )
+    public Node( String inName )
     {
         name = inName;
         parent = null;
         nodeList = new LinkedList<Node>();
         edgeList = new LinkedList<Edge>();
+        heuristic = -1;
     }
 
 //---------------------------------------------------------------------------
     //GETTERS
 
-    public int getName()         { return name; }
+    public String getName()         { return name; }
     public Node getParent()      { return parent; }
     public List<Edge> getEdges() { return edgeList; }
+    public int getHeuristic()    { return heuristic; }
 
 //---------------------------------------------------------------------------
     //SETTERS
 
-    public void setName(int inName)    { name = inName; }
+    public void setName(String inName)    { name = inName; }
     public void setParent(Node inPar)  { parent = inPar; }
+    public void setHeuristic(int inHeur) { heuristic = inHeur; }
 
 //---------------------------------------------------------------------------
     //NAME: getNodes()
@@ -76,7 +80,7 @@ public class Node implements Comparable<Node>
         Node sink = inEdge.getSink();
 
         // ADD THE CONNECTED NODE DEPENDENCIES
-        if ( source.getName() != name )
+        if ( ! source.getName().equals(name) )
             nodeList.add( source );
         else
             nodeList.add( sink );
@@ -91,7 +95,7 @@ public class Node implements Comparable<Node>
     @Override
     public int compareTo(Node inNode)
     {
-        return ( (Integer)this.name ).compareTo( inNode.getName() );
+        return ( this.name ).compareTo( inNode.getName() );
     }
 
 //---------------------------------------------------------------------------
@@ -104,7 +108,7 @@ public class Node implements Comparable<Node>
         String state = "NAME: " + name + " -> ";
         for ( Node next : nodeList )
             state += next.getName() + " ";
-        state += "\n";
+        state += "H: " + heuristic + "\n";
         return state;
     }
 

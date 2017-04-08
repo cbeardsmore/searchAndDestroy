@@ -1,3 +1,3 @@
 #/bin/bash
 
-java Searcher -alim $1 $2 $3
+java AlimSearch $1 $2 $3

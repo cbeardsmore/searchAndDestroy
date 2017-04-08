@@ -1,3 +1,3 @@
 #/bin/bash
 
-java Searcher -beam $1 $2 $3 $4
+java BeamSearch $1 $2 $3 $4 $5
