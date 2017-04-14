@@ -3,7 +3,7 @@
 *	AUTHOR: Connor Beardsmore - 15504319
 *	UNIT: AMI300
 *	PURPOSE: Performs an informed beam search on given graph file
-*   LAST MOD: 09/05/17
+*   LAST MOD: 14/05/17
 *   REQUIRES: Scanner, List
 ***************************************************************************/
 
@@ -12,14 +12,14 @@ import java.util.List;
 
 public class BeamSearch
 {
-    public static final int ARGS = 5;
+    public static final int ARG_NUM = 5;
 
 //---------------------------------------------------------------------------
 
     public static void main( String[] args )
     {
         // CHECK COMMAND LINE PARAMTER LENGTH
-        if ( args.length != ARGS )
+        if ( args.length != ARG_NUM )
         {
             System.err.print("\nUSAGE: java BeamSearch <initial> <goal> <graphfile>");
             System.err.print("<heuristicfile> <num beams (k)>\n");
@@ -27,16 +27,16 @@ public class BeamSearch
         }
 
         // RENAME ARGS FOR SIMPLICITY
-        String gFile = null, hFile = null;
-        String initial = null, goal = null;
+        String initial = args[0];
+        String goal = args[1];
+        String gFile = args[2];
+        String hFile = args[3];
         int k = 0;
+        List<List<Node>> paths;
 
+        // PARSE k TO ENSURE VALIDITY
         try
         {
-            initial = args[0];
-            goal = args[1];
-            gFile = args[2];
-            hFile = args[3];
             k = Integer.parseInt( args[4] );
         }
         catch ( NumberFormatException e )
@@ -58,24 +58,38 @@ public class BeamSearch
         }
         catch ( Exception e )
         {
-            System.err.println("ERROR READING FILE");
+            System.err.println("ERROR READING FILE:");
+            System.err.println( e.getMessage() );
             System.exit(1);
         }
 
+        // PERFROM THE ACTUAL BEAM SEARCH, CHECKING FOR ERRORS
+        try
+        {
+            paths = Search.beamSearch( graph, initial, goal, k );
+        }
+        catch ( Exception e)
+        {
+            System.err.println("ERROR PERFORMING SEARCH:");
+            System.err.println( e.getMessage() );
+            System.exit(1);
+        }
 
-        System.out.println( graph.toString() );
+        // DO STUFF WITH THE FINAL PATHS
+        printPaths( paths );
 
-        // PERFORM SEARCH AND OUTPUT
-        //List<Node> path = Search.beamSearch( graph, initial, goal, k );
-        //printPath( path );
     }
 
 //---------------------------------------------------------------------------
 
-    public static void printPath( List<Node> path )
+    public static void printPaths( List<List<Node>> paths )
     {
-        for ( Node next : path )
-            System.out.print( next.getName() + " " );
+        for ( List<Node> nextList : paths )
+        {
+            for ( Node next : nextList )
+                System.out.print( next.getName() + " " );
+            System.out.print("\n");
+        }
         System.out.print("\n");
     }
 

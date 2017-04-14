@@ -21,7 +21,7 @@ public class Search
     //EXPORT: path to goal (List<Node>)
     //PURPOSE: Perform beam informed search on the graph
 
-    public static List<Node> beamSearch( Graph graph, String initial, String goal, int k )
+    public static List<List<Node>> beamSearch( Graph graph, String initial, String goal, int k )
     {
         boolean done = false;
         List<Node> explored = new LinkedList<>();
@@ -122,7 +122,7 @@ public class Search
     //EXPORT: path to goal (List<Node>)
     //PURPOSE: Perform breadth-first search on a graph
 
-    public static List<Node> bfs( Graph graph, String initial, String goal )
+    public static List<Node> bfs( Graph graph, String initial, Stringd goal )
     {
         boolean done = false;
         List<Node> explored = new LinkedList<>();
