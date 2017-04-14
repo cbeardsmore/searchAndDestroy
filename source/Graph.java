@@ -17,6 +17,7 @@ public class Graph
     //CLASSFIELDS
     private List<Edge> edgeList;
     private Map<String,Node> nodeMap;
+    private int numNodes;
 
 //---------------------------------------------------------------------------
     //DEFAULT CONSTRUCTOR
@@ -25,6 +26,14 @@ public class Graph
     {
         edgeList = new LinkedList<Edge>();
         nodeMap = new HashMap<String,Node>();
+        numNodes = 0;
+    }
+
+//---------------------------------------------------------------------------
+
+    public int getNumNodes()
+    {
+        return numNodes;
     }
 
 //---------------------------------------------------------------------------
@@ -45,6 +54,7 @@ public class Graph
     public void addNode( Node inNode )
     {
         nodeMap.put( inNode.getName(), inNode );
+        numNodes++;
     }
 
 //---------------------------------------------------------------------------
@@ -66,7 +76,7 @@ public class Graph
 
     public String toString()
     {
-        String state = "GRAPH\n-----\n";
+        String state = "GRAPH\n-----(" + numNodes + ")\n";
 
         state += "EDGES:\n------\n";
         for ( Edge next : edgeList )

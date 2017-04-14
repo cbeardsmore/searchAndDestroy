@@ -50,7 +50,7 @@ public class Node implements Comparable<Node>
 //---------------------------------------------------------------------------
     //NAME: getNodes()
     //EXPORT: nodeList (List<Node>)
-    //PURPOSE: Retreive a list of nodes in sorted order
+    //PURPOSE: Retreive a list of nodes in sorted order based on heuristic
 
     public List<Node> getNodes()
     {
@@ -90,12 +90,15 @@ public class Node implements Comparable<Node>
     }
 
 //---------------------------------------------------------------------------
-    //REVERSE ORDER SORT
+    //NAME: compareTo()
+    //IMPORT: inNode (Node)
+    //EXPORT: comparison (int)
+    //PURPOSE: Compares the two nodes based on the heurstic value, lowest first
 
     @Override
     public int compareTo(Node inNode)
     {
-        return ( this.name ).compareTo( inNode.getName() );
+        return this.heuristic - inNode.heuristic;
     }
 
 //---------------------------------------------------------------------------

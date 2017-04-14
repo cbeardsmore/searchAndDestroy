@@ -9,6 +9,7 @@
 
 import java.util.Scanner;
 import java.util.List;
+import java.util.LinkedList;
 
 public class BeamSearch
 {
@@ -27,12 +28,12 @@ public class BeamSearch
         }
 
         // RENAME ARGS FOR SIMPLICITY
+        List<Node> path = new LinkedList<>();
         String initial = args[0];
         String goal = args[1];
         String gFile = args[2];
         String hFile = args[3];
         int k = 0;
-        List<List<Node>> paths;
 
         // PARSE k TO ENSURE VALIDITY
         try
@@ -66,30 +67,29 @@ public class BeamSearch
         // PERFROM THE ACTUAL BEAM SEARCH, CHECKING FOR ERRORS
         try
         {
-            paths = Search.beamSearch( graph, initial, goal, k );
+            path = Search.beamSearch( graph, initial, goal, k );
         }
         catch ( Exception e)
         {
             System.err.println("ERROR PERFORMING SEARCH:");
             System.err.println( e.getMessage() );
+
+            e.printStackTrace();
+
             System.exit(1);
         }
 
         // DO STUFF WITH THE FINAL PATHS
-        printPaths( paths );
+        printPath( path );
 
     }
 
 //---------------------------------------------------------------------------
 
-    public static void printPaths( List<List<Node>> paths )
+    public static void printPath( List<Node> path )
     {
-        for ( List<Node> nextList : paths )
-        {
-            for ( Node next : nextList )
-                System.out.print( next.getName() + " " );
-            System.out.print("\n");
-        }
+        for ( Node next : path )
+            System.out.print( next.getName() + " " );
         System.out.print("\n");
     }
 
