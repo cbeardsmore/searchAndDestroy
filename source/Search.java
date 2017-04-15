@@ -31,7 +31,6 @@ public class Search
     {
         List<List<Node>> paths = new LinkedList<>();
         List<Node> explored = new LinkedList<>();
-        Set<Node> terminals = new HashSet<>();
         Queue<Node> frontier = new PriorityQueue<>();
         Queue<Node> beam = new PriorityQueue<>();
         boolean done = false;
@@ -48,10 +47,13 @@ public class Search
             //LOOP WHILE THE BEAM STILL HAS NODES WITHIN IT
             while ( !beam.isEmpty() )
             {
-                // GET THE NEXT ITEM IN THE BEAM AND ADD TO EXPLORED + TERMINALS
+                // GET THE NEXT ITEM IN THE BEAM AND ADD TO EXPLORED
                 Node nextNode = beam.remove();
                 explored.add( nextNode );
-                terminals.add( nextNode );
+
+                // PRINT PATH IS NODE IS TERMINAL
+                if ( nextNode.getNodes().isEmpty() )
+                    paths.add( createPath( nextNode ) );
 
                 // ADD ALL OF ITS CHILDREN FOR CONSIDERATION, SET PARENT FIELD
                 for ( Node child : nextNode.getNodes() )
@@ -72,29 +74,24 @@ public class Search
             while ( ( !frontier.isEmpty() ) && ( curr < k ) )
             {
                 Node nextNode = frontier.remove();
-                // REMOVE PARENT FROM THE LIST OF TERMINAL NODES
-                terminals.remove( nextNode.getParent() );
+                curr++;
 
                 // GOAL TEST
                 if ( goal.equals( nextNode.getName() ) )
                 {
                     paths.add( createPath( nextNode ) );
+                    for ( int ii = curr; ii < k; ii++ )
+                        paths.add( createPath( frontier.remove() ) );
                     break;
                 }
                 // ADD THE NODE INTO THE BEAM, IF IT'S NOT ALREADY THERE
                 if ( !beam.contains( nextNode ) )
                 {
                     beam.add( nextNode );
-                    curr++;
                 }
             }
 
-            // THROW OUT ALL NODES WHO ARE OUTSIDE OF THE BEAM
-            for ( Node terminalNode : terminals )
-                paths.add( createPath( terminalNode ) );
-            terminals.clear();
             frontier.clear();
-
 
             // IF THE BEAM IS EMPTY, WE MUST BE DONE
             if ( beam.isEmpty() )
@@ -110,8 +107,9 @@ public class Search
     //EXPORT: path to goal (List<Node>)
     //PURPOSE: Perform memory limited A* search on a graph
 
-    public static List<Node> alimSearch( Graph graph, int initial, int goal )
+    public static List<List<Node>> alimSearch( Graph graph, String initial, String goal, int numNodes )
     {
+        validateFields( graph, initial, goal, numNodes );
         return null;
     }
 

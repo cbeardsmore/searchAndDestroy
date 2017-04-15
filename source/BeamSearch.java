@@ -73,22 +73,29 @@ public class BeamSearch
         {
             System.err.println("ERROR PERFORMING SEARCH:");
             System.err.println( e.getMessage() );
-
-            e.printStackTrace();
-
             System.exit(1);
         }
 
         // DO STUFF WITH THE FINAL PATHS
+        printSummary( graph, initial, goal, k );
         printPaths( paths, graph.getNode(goal) );
 
     }
 
 //---------------------------------------------------------------------------
 
+    public static void printSummary( Graph graph, String initial, String goal, int k )
+    {
+        System.out.println("\n----------BEAM SEARCH----------");
+        System.out.println("INITIAL NODE IS: " + initial);
+        System.out.println("   GOAL NODE IS: " + goal);
+        System.out.println("  BEAM WIDTH IS: " + k + "\n");
+    }
+
+//---------------------------------------------------------------------------
+
     public static void printPaths( List<List<Node>> paths, Node goal )
     {
-        System.out.print("\n");
         for ( List<Node> nextPath : paths )
         {
             if ( nextPath.contains(goal) )
@@ -99,7 +106,7 @@ public class BeamSearch
                 System.out.print( next.getName() + " " );
             System.out.print("\n");
         }
-        System.out.print("\n");
+        System.out.println("--------------------------------\n");
     }
 
 //---------------------------------------------------------------------------
