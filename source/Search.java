@@ -13,6 +13,8 @@ import java.util.Stack;
 import java.util.Queue;
 import java.util.PriorityQueue;
 import java.util.Collections;
+import java.util.Set;
+import java.util.HashSet;
 
 public class Search
 {
@@ -25,10 +27,12 @@ public class Search
     //EXPORT: path to goal (List<Node>)
     //PURPOSE: Perform beam informed search on the graph
 
-    public static List<Node> beamSearch( Graph graph, String initial, String goal, int k )
+    public static List<List<Node>> beamSearch( Graph graph, String initial, String goal, int k )
     {
+        List<List<Node>> paths = new LinkedList<>();
         List<Node> explored = new LinkedList<>();
-        Queue<Node> children = new PriorityQueue<>();
+        Set<Node> terminals = new HashSet<>();
+        Queue<Node> frontier = new PriorityQueue<>();
         Queue<Node> beam = new PriorityQueue<>();
         boolean done = false;
 
@@ -38,59 +42,66 @@ public class Search
         // ADD THE INITIAL NODE TO THE QUEUE
         beam.add( graph.getNode(initial) );
 
-        // LOOP UNTIL GOAL FOUND - DONE SET TO TRUE
+        // LOOP UNTIL GOAL FOUND OR THE BEAM BECOMES EMPTY
         while ( !done )
         {
-            //ADD ALL CHILDREN OF THE CURRENT BEAM INTO A PRIORITYQUEUE
+            //LOOP WHILE THE BEAM STILL HAS NODES WITHIN IT
             while ( !beam.isEmpty() )
             {
-                // GET THE NEXT ITEM IN THE BEAM AND ADD TO EXPLORED
+                // GET THE NEXT ITEM IN THE BEAM AND ADD TO EXPLORED + TERMINALS
                 Node nextNode = beam.remove();
-
-                System.out.println( "REMOVE FROM BEAM:" + nextNode.getName() );
-
                 explored.add( nextNode );
+                terminals.add( nextNode );
+
                 // ADD ALL OF ITS CHILDREN FOR CONSIDERATION, SET PARENT FIELD
                 for ( Node child : nextNode.getNodes() )
                 {
-
-                    if ( !explored.contains(child) )
+                    // ONLY CONSIDER IF THE NODES HASN'T BEEN EXPLOTED AND
+                    // THE NODE IS NOT CURRENTLY WITHIN THE FRONTIER
+                    if ( ( !explored.contains(child) ) && ( !frontier.contains(child) ) )
                     {
-                        System.out.println("ADD TO CHILDREN:" + child.getName());
-                        System.out.println("\t" + child.getName() + " SET TO " + nextNode.getName() );
                         child.setParent( nextNode );
-                        children.add( child );
+                        frontier.add( child );
                     }
                 }
 
             }
 
-            // ADD THE NEXT ITEMS INTO THE BEAM
+            // ADD THE k NEXT ITEMS INTO THE BEAM
             int curr = 0;
-            while ( ( !children.isEmpty() ) && ( curr < k ) )
+            while ( ( !frontier.isEmpty() ) && ( curr < k ) )
             {
-                Node nextNode = children.remove();
+                Node nextNode = frontier.remove();
+                // REMOVE PARENT FROM THE LIST OF TERMINAL NODES
+                terminals.remove( nextNode.getParent() );
 
+                // GOAL TEST
                 if ( goal.equals( nextNode.getName() ) )
-                    done = true;
+                {
+                    paths.add( createPath( nextNode ) );
+                    break;
+                }
+                // ADD THE NODE INTO THE BEAM, IF IT'S NOT ALREADY THERE
                 if ( !beam.contains( nextNode ) )
                 {
-                    System.out.println( "MOVE CHILD INTO BEAM:" + nextNode.getName() );
-
                     beam.add( nextNode );
                     curr++;
                 }
             }
 
-            // EMPTY ALL THE OTHER ELEMENTS OUT, NOT WITHIN THE BEAM
-            children.clear();
+            // THROW OUT ALL NODES WHO ARE OUTSIDE OF THE BEAM
+            for ( Node terminalNode : terminals )
+                paths.add( createPath( terminalNode ) );
+            terminals.clear();
+            frontier.clear();
+
 
             // IF THE BEAM IS EMPTY, WE MUST BE DONE
             if ( beam.isEmpty() )
                 done = true;
         }
 
-        return createPath( graph.getNode(goal) );
+        return paths;
     }
 
 //---------------------------------------------------------------------------

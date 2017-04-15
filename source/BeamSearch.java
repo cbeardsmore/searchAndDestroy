@@ -28,7 +28,7 @@ public class BeamSearch
         }
 
         // RENAME ARGS FOR SIMPLICITY
-        List<Node> path = new LinkedList<>();
+        List<List<Node>> paths = new LinkedList<>();
         String initial = args[0];
         String goal = args[1];
         String gFile = args[2];
@@ -67,7 +67,7 @@ public class BeamSearch
         // PERFROM THE ACTUAL BEAM SEARCH, CHECKING FOR ERRORS
         try
         {
-            path = Search.beamSearch( graph, initial, goal, k );
+            paths = Search.beamSearch( graph, initial, goal, k );
         }
         catch ( Exception e)
         {
@@ -80,16 +80,25 @@ public class BeamSearch
         }
 
         // DO STUFF WITH THE FINAL PATHS
-        printPath( path );
+        printPaths( paths, graph.getNode(goal) );
 
     }
 
 //---------------------------------------------------------------------------
 
-    public static void printPath( List<Node> path )
+    public static void printPaths( List<List<Node>> paths, Node goal )
     {
-        for ( Node next : path )
-            System.out.print( next.getName() + " " );
+        System.out.print("\n");
+        for ( List<Node> nextPath : paths )
+        {
+            if ( nextPath.contains(goal) )
+                System.out.print("SOLUTION PATH: ");
+            else
+                System.out.print("PARTIAL PATH:  ");
+            for ( Node next : nextPath )
+                System.out.print( next.getName() + " " );
+            System.out.print("\n");
+        }
         System.out.print("\n");
     }
 
