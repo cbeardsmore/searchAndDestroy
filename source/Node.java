@@ -18,7 +18,7 @@ public class Node implements Comparable<Node>
     private Node parent;
     private List<Node> nodeList;
     private List<Edge> edgeList;
-    private int heuristic;
+    private double heuristic;
 
 //---------------------------------------------------------------------------
     //ALTERNATE CONSTRUCTOR
@@ -38,14 +38,14 @@ public class Node implements Comparable<Node>
     public String getName()         { return name; }
     public Node getParent()      { return parent; }
     public List<Edge> getEdges() { return edgeList; }
-    public int getHeuristic()    { return heuristic; }
+    public double getHeuristic()    { return heuristic; }
 
 //---------------------------------------------------------------------------
     //SETTERS
 
     public void setName(String inName)    { name = inName; }
     public void setParent(Node inPar)  { parent = inPar; }
-    public void setHeuristic(int inHeur) { heuristic = inHeur; }
+    public void setHeuristic(double inHeur) { heuristic = inHeur; }
 
 //---------------------------------------------------------------------------
     //NAME: getNodes()
@@ -98,7 +98,7 @@ public class Node implements Comparable<Node>
     @Override
     public int compareTo(Node inNode)
     {
-        return this.heuristic - inNode.heuristic;
+        return (int)Math.ceil(this.heuristic - inNode.heuristic);
     }
 
 //---------------------------------------------------------------------------

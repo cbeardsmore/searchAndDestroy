@@ -86,7 +86,7 @@ public class FileIO
 
         // SIMPLIFY NAMING
         String nodeName = tokens[0];
-        int weight = Integer.parseInt( tokens[1] );
+        double weight = Double.parseDouble( tokens[1] );
 
         Node node = graph.getNode( nodeName );
         node.setHeuristic( weight );

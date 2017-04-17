@@ -13,7 +13,9 @@ import java.util.LinkedList;
 
 public class BeamSearch
 {
-    public static final int ARG_NUM = 5;
+    public static final int ARG_NUM = 6;
+    public static final String YES = "y";
+    public static final String NO = "n";
 
 //---------------------------------------------------------------------------
 
@@ -23,7 +25,7 @@ public class BeamSearch
         if ( args.length != ARG_NUM )
         {
             System.err.print("\nUSAGE: java BeamSearch <initial> <goal> <graphfile>");
-            System.err.print("<heuristicfile> <num beams (k)>\n");
+            System.err.print(" <heuristicfile> <beams(k)> <y/n for museum>\n");
             System.exit(1);
         }
 
@@ -33,12 +35,18 @@ public class BeamSearch
         String goal = args[1];
         String gFile = args[2];
         String hFile = args[3];
+        String museum = args[5];
+        boolean flag = false;
         int k = 0;
 
-        // PARSE k TO ENSURE VALIDITY
+        // PARSE k + museum TO ENSURE VALIDITY
         try
         {
             k = Integer.parseInt( args[4] );
+            if ( museum.equals(YES) )
+                flag = true;
+            else if ( !museum.equals(NO) )
+                throw new NumberFormatException("INVALID MUSEUM FLAG");
         }
         catch ( NumberFormatException e )
         {
@@ -67,12 +75,15 @@ public class BeamSearch
         // PERFROM THE ACTUAL BEAM SEARCH, CHECKING FOR ERRORS
         try
         {
-            paths = Search.beamSearch( graph, initial, goal, k );
+            paths = Search.beamSearch( graph, initial, goal, k, flag );
         }
         catch ( Exception e)
         {
             System.err.println("ERROR PERFORMING SEARCH:");
             System.err.println( e.getMessage() );
+
+            e.printStackTrace();
+
             System.exit(1);
         }
 

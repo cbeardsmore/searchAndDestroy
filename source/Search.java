@@ -7,14 +7,7 @@
 *   REQUIRES: List, LinkedList, Stack
 ***************************************************************************/
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Stack;
-import java.util.Queue;
-import java.util.PriorityQueue;
-import java.util.Collections;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 public class Search
 {
@@ -27,7 +20,8 @@ public class Search
     //EXPORT: path to goal (List<Node>)
     //PURPOSE: Perform beam informed search on the graph
 
-    public static List<List<Node>> beamSearch( Graph graph, String initial, String goal, int k )
+    public static List<List<Node>> beamSearch( Graph graph, String initial, String goal,
+                                               int k, boolean museum )
     {
         List<List<Node>> paths = new LinkedList<>();
         List<Node> explored = new LinkedList<>();
@@ -47,6 +41,11 @@ public class Search
             //LOOP WHILE THE BEAM STILL HAS NODES WITHIN IT
             while ( !beam.isEmpty() )
             {
+                System.out.print("BEAM IS: ");
+                for ( Node next : beam )
+                    System.out.print( next.getName() + " " );
+                System.out.print("\n");
+
                 // GET THE NEXT ITEM IN THE BEAM AND ADD TO EXPLORED
                 Node nextNode = beam.remove();
                 explored.add( nextNode );
@@ -73,22 +72,37 @@ public class Search
             int curr = 0;
             while ( ( !frontier.isEmpty() ) && ( curr < k ) )
             {
+                System.out.print("FRONTIER IS: ");
+                for ( Node next : frontier )
+                    System.out.print( next.getName() + " " );
+                System.out.print("\n");
+
                 Node nextNode = frontier.remove();
                 curr++;
 
                 // GOAL TEST
                 if ( goal.equals( nextNode.getName() ) )
                 {
+                    // PRINT GOAL PATH + ALL PARTIAL PATHS STORED
                     paths.add( createPath( nextNode ) );
-                    for ( int ii = curr; ii < k; ii++ )
-                        paths.add( createPath( frontier.remove() ) );
-                    break;
+                    int ii = 1;
+
+                    for ( Node current : frontier )
+                    {
+                        ii++;
+                        paths.add( createPath(current) );
+                        if ( ii >= k )
+                            break;
+                    }
+
+                    // STOP IF USER DIDN'T SPECIFY TO CONTINUE
+                    if ( !museum )
+                        done = true;
+
                 }
                 // ADD THE NODE INTO THE BEAM, IF IT'S NOT ALREADY THERE
-                if ( !beam.contains( nextNode ) )
-                {
+                else if ( !beam.contains( nextNode ) )
                     beam.add( nextNode );
-                }
             }
 
             frontier.clear();
