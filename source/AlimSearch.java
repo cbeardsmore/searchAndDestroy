@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 public class AlimSearch
 {
-    public static final int ARGS = 5;
+    public static final int ARGS = 6;
 
 //---------------------------------------------------------------------------
 
@@ -23,12 +23,12 @@ public class AlimSearch
         if ( args.length != ARGS )
         {
             System.err.print("\nUSAGE: java AlimSearch <initial> <goal> <graphfile>");
-            System.err.print("<heuristicfile> <numNodes>\n");
+            System.err.print("<heuristicfile> <numNodes> <y/n for museum>\n");
             System.exit(1);
         }
 
         // RENAME ARGS FOR SIMPLICITY
-        List<List<Node>> paths = new LinkedList<>();
+        List<List<String>> paths = new LinkedList<>();
         String initial = args[0];
         String goal = args[1];
         String gFile = args[2];
@@ -54,8 +54,7 @@ public class AlimSearch
         // READ IN GRAPH + HEURISTIC FILES
         try
         {
-            fileReader.readGraph( gFile );
-            fileReader.readHeuristic( hFile );
+            fileReader.readFiles( gFile, hFile );
         }
         catch ( Exception e )
         {
@@ -64,7 +63,7 @@ public class AlimSearch
             System.exit(1);
         }
 
-        // PERFROM THE ACTUAL BEAM SEARCH, CHECKING FOR ERRORS
+        // PERFROM THE ACTUAL ALIM SEARCH, CHECKING FOR ERRORS
         try
         {
             paths = Search.alimSearch( graph, initial, goal, numNodes );
@@ -78,7 +77,7 @@ public class AlimSearch
 
         // DO STUFF WITH THE FINAL PATHS
         printSummary( graph, initial, goal, numNodes );
-        printPaths( paths, graph.getNode(goal) );
+        Search.printPaths( paths, goal );
 
     }
 
@@ -89,24 +88,7 @@ public class AlimSearch
         System.out.println("\n----------ALIM SEARCH----------");
         System.out.println("INITIAL NODE IS: " + initial);
         System.out.println("   GOAL NODE IS: " + goal);
-        System.out.println("  BEAM WIDTH IS: " + k + "\n");
-    }
-
-//---------------------------------------------------------------------------
-
-    public static void printPaths( List<List<Node>> paths, Node goal )
-    {
-        for ( List<Node> nextPath : paths )
-        {
-            if ( nextPath.contains(goal) )
-                System.out.print("SOLUTION PATH: ");
-            else
-                System.out.print("PARTIAL PATH:  ");
-            for ( Node next : nextPath )
-                System.out.print( next.getName() + " " );
-            System.out.print("\n");
-        }
-        System.out.println("--------------------------------\n");
+        System.out.println("   MEMORY NODES: " + k + "\n");
     }
 
 //---------------------------------------------------------------------------

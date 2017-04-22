@@ -3,13 +3,15 @@
 *	AUTHOR: Connor Beardsmore - 15504319
 *	UNIT: AMI300
 *	PURPOSE: Represents a single node in a graph
-*   LAST MOD: 13/04/07
-*   REQUIRES: NONE
+*   LAST MOD: 22/04/07
+*   REQUIRES: List, LinkedList, Collections
 ***************************************************************************/
 
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Collections;
+
+//---------------------------------------------------------------------------
 
 public class Node implements Comparable<Node>
 {
@@ -20,6 +22,9 @@ public class Node implements Comparable<Node>
     private List<Edge> edgeList;
     private double heuristic;
 
+    //CONSTANTS
+    public static final int DEFAULT = -1;
+
 //---------------------------------------------------------------------------
     //ALTERNATE CONSTRUCTOR
 
@@ -29,7 +34,7 @@ public class Node implements Comparable<Node>
         parent = null;
         nodeList = new LinkedList<Node>();
         edgeList = new LinkedList<Edge>();
-        heuristic = -1;
+        heuristic = DEFAULT;
     }
 
 //---------------------------------------------------------------------------
@@ -71,7 +76,7 @@ public class Node implements Comparable<Node>
 //---------------------------------------------------------------------------
     //NAME: addEdge()
     //IMPORT: inEdge (Edge)
-    //PURPOSE: Add edge into the crrent edge list and fix dependencies
+    //PURPOSE: Add edge into the current edge list and fix dependencies
 
     public void addEdge(Edge inEdge)
     {
@@ -80,10 +85,12 @@ public class Node implements Comparable<Node>
         Node sink = inEdge.getSink();
 
         // ADD THE CONNECTED NODE DEPENDENCIES
-        if ( ! source.getName().equals(name) )
+        if ( sink.getName().equals(name) )
             nodeList.add( source );
-        else
+        else if ( source.getName().equals(name) )
             nodeList.add( sink );
+        else
+            throw new IllegalArgumentException("EDGE INVALID FOR NODE");
 
         // ADD EDGE INTO THE EDGE LIST
         edgeList.add(inEdge);
@@ -109,16 +116,16 @@ public class Node implements Comparable<Node>
     public String toString()
     {
         String state = "NAME: " + name + " -> ";
-        for ( Node next : nodeList )
-            state += next.getName() + " ";
-        state += "H: " + heuristic + "\n";
+        state += connectedTo();
+        state += "\n\tH: " + heuristic;
+        state += " PARENT: " + parent.getName() + "\n";
         return state;
     }
 
 //---------------------------------------------------------------------------
     //NAME: connectedTo()
     //EXPORT: connected (String)
-    //PURPOSE: Return line of all connected node name
+    //PURPOSE: Return list of all connected node names
 
     public String connectedTo()
     {

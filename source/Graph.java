@@ -30,11 +30,9 @@ public class Graph
     }
 
 //---------------------------------------------------------------------------
+    // GETTERS
 
-    public int getNumNodes()
-    {
-        return numNodes;
-    }
+    public int getNumNodes() { return numNodes; }
 
 //---------------------------------------------------------------------------
     //NAME: getNode()

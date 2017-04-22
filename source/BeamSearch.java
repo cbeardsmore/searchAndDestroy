@@ -30,7 +30,7 @@ public class BeamSearch
         }
 
         // RENAME ARGS FOR SIMPLICITY
-        List<List<Node>> paths = new LinkedList<>();
+        List<List<String>> paths = new LinkedList<>();
         String initial = args[0];
         String goal = args[1];
         String gFile = args[2];
@@ -62,8 +62,7 @@ public class BeamSearch
         // READ IN GRAPH + HEURISTIC FILES
         try
         {
-            fileReader.readGraph( gFile );
-            fileReader.readHeuristic( hFile );
+            fileReader.readFiles( gFile, hFile );
         }
         catch ( Exception e )
         {
@@ -81,16 +80,13 @@ public class BeamSearch
         {
             System.err.println("ERROR PERFORMING SEARCH:");
             System.err.println( e.getMessage() );
-
-            e.printStackTrace();
-
             System.exit(1);
         }
 
         // DO STUFF WITH THE FINAL PATHS
         printSummary( graph, initial, goal, k );
-        printPaths( paths, graph.getNode(goal) );
-
+        Search.printPaths( paths, goal );
+        System.out.println("\n-------------------------------");
     }
 
 //---------------------------------------------------------------------------
@@ -101,23 +97,8 @@ public class BeamSearch
         System.out.println("INITIAL NODE IS: " + initial);
         System.out.println("   GOAL NODE IS: " + goal);
         System.out.println("  BEAM WIDTH IS: " + k + "\n");
-    }
+        System.out.println("\n-------------------------------");
 
-//---------------------------------------------------------------------------
-
-    public static void printPaths( List<List<Node>> paths, Node goal )
-    {
-        for ( List<Node> nextPath : paths )
-        {
-            if ( nextPath.contains(goal) )
-                System.out.print("SOLUTION PATH: ");
-            else
-                System.out.print("PARTIAL PATH:  ");
-            for ( Node next : nextPath )
-                System.out.print( next.getName() + " " );
-            System.out.print("\n");
-        }
-        System.out.println("--------------------------------\n");
     }
 
 //---------------------------------------------------------------------------

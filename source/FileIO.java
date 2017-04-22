@@ -15,6 +15,9 @@ public class FileIO
     //CLASSFIELDS
     private Graph graph;
 
+    public static final int GRAPH_FIELDS = 3;
+    public static final int HEURISTIC_FIELDS = 2;
+
 //---------------------------------------------------------------------------
     //ALTERNATE CONSTRUCTOR
 
@@ -28,68 +31,30 @@ public class FileIO
 
 //---------------------------------------------------------------------------
     //NAME: readGraph()
-    //IMPORT: filename (String)
-    //PURPOSE: Read in a graph from a given filename
+    //IMPORT: gFilename (String), hFilename (String)
+    //PURPOSE: Read in graph and heuristic files
 
-    public void readGraph( String filename )
+    public void readFiles( String gFilename, String hFilename )
     {
-        // OPEN FILE
-        File file = new File( filename );
+        // OPEN FILES
+        File gFile = new File( gFilename );
+        File hFile = new File( hFilename );
 
         try
         {
-            // PARSE EACH LINE INDIVIDUALLY
-            Scanner sc = new Scanner( file );
-            while ( sc.hasNextLine() )
-                parseLine( sc.nextLine() );
+            // PARSE EACH LINE OF THE GRAPH FILE
+            Scanner gScan = new Scanner( gFile );
+            while ( gScan.hasNextLine() )
+                parseLine( gScan.nextLine() );
+            // PARSE EACH LINE OF THE HEURISTIC FILE
+            Scanner fScan = new Scanner( hFile );
+            while ( fScan.hasNextLine() )
+                parseHeuristic( fScan.nextLine() );
         }
         catch ( FileNotFoundException e )
         {
             e.printStackTrace();
         }
-    }
-
-//---------------------------------------------------------------------------
-    //NAME: readHeuristic()
-    //IMPORT: filename (String)
-    //PURPOSE: Read in heuristic details from given file
-
-    public void readHeuristic( String filename )
-    {
-        // OPEN FILE
-        File file = new File( filename );
-
-        try
-        {
-            // PARSE EACH LINE INDIVIDUALLY
-            Scanner sc = new Scanner( file );
-            while ( sc.hasNextLine() )
-                parseHeuristic( sc.nextLine() );
-        }
-        catch ( FileNotFoundException e )
-        {
-            e.printStackTrace();
-        }
-    }
-
-//---------------------------------------------------------------------------
-    //NAME: parseLine()
-    //IMPORT: line (String)
-    //PURPOSE: Parse a given line with format <NODE WEIGHT>
-
-    public void parseHeuristic( String line )
-    {
-        String[] tokens = line.split(" ");
-
-        if ( tokens.length != 2 )
-            throw new IllegalArgumentException("FILE FORMAT INVALID");
-
-        // SIMPLIFY NAMING
-        String nodeName = tokens[0];
-        double weight = Double.parseDouble( tokens[1] );
-
-        Node node = graph.getNode( nodeName );
-        node.setHeuristic( weight );
     }
 
 //---------------------------------------------------------------------------
@@ -101,8 +66,13 @@ public class FileIO
     {
         String[] tokens = line.split(" ");
 
-        if ( tokens.length != 3 )
-            throw new IllegalArgumentException("FILE FORMAT INVALID");
+        // IGNORE EMPTY LINES
+        if ( line.equals("") )
+            return;
+
+        // FORMAT MUST BE 2 NODE NAMES FOLLOWED BY A VALUE
+        if ( tokens.length != GRAPH_FIELDS )
+            throw new IllegalArgumentException("GRAPH FILE FORMAT INVALID");
 
         // SIMPLIFY NAMING
         String source = tokens[0];
@@ -128,6 +98,31 @@ public class FileIO
         // ADD THE NEW EDGE INTO THE GRAPH
         Edge edge = new Edge( sourceNode, sinkNode, weight );
         graph.addEdge( edge );
+    }
+
+//---------------------------------------------------------------------------
+
+    //NAME: parseHeuristic()
+    //IMPORT: line (String)
+    //PURPOSE: Parse a given line with format <NODE WEIGHT>
+
+    public void parseHeuristic( String line )
+    {
+        String[] tokens = line.split(" ");
+
+        // IGNORE EMPTY LINES
+        if ( line.equals("") )
+            return;
+
+        if ( tokens.length != HEURISTIC_FIELDS )
+            throw new IllegalArgumentException("HEURISTIC FILE FORMAT INVALID");
+
+        // SIMPLIFY NAMING
+        String nodeName = tokens[0];
+        double weight = Double.parseDouble( tokens[1] );
+
+        Node node = graph.getNode( nodeName );
+        node.setHeuristic( weight );
     }
 
 //---------------------------------------------------------------------------
