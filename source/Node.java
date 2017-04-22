@@ -136,13 +136,14 @@ public class Node implements Comparable<Node>
             return true;
         if ( parent == null )
             return false;
-        return inPath(parent);
+        return parent.inPath( inNode );
     }
 
 //---------------------------------------------------------------------------
     //NAME: clone()
     //EXPORT: newNode (Object)
 
+    @Override
     public Object clone()
     {
         Node newNode = new Node(name);

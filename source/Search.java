@@ -24,7 +24,6 @@ public class Search
                                                int k, boolean museum )
     {
         List<List<String>> paths = new LinkedList<>();
-        List<Node> explored = new LinkedList<>();
         Queue<Node> frontier = new PriorityQueue<>();
         Queue<Node> beam = new PriorityQueue<>();
         boolean done = false;
@@ -50,7 +49,6 @@ public class Search
             {
                 // GET THE NEXT ITEM IN THE BEAM AND ADD TO EXPLORED
                 Node nextNode = beam.remove();
-                explored.add( nextNode );
 
                 // ADD ALL OF ITS CHILDREN FOR CONSIDERATION, SET PARENT FIELD
                 for ( Node child : nextNode.getNodes() )
@@ -65,13 +63,15 @@ public class Search
                         if ( !museum )
                             return paths;
                     }
-                    // ONLY CONSIDER IF THE NODES HASN'T BEEN EXPLORED AND
-                    // THE NODE IS NOT CURRENTLY WITHIN THE FRONTIER
-                    else if ( ( !explored.contains(child) ) && ( !frontier.contains(child) )
-                                  && ( !beam.contains(child) ) )
+                    // ONLY CONSIDER IF THE NODES ISN'T IN THE FRONTIER OR BEAM
+                    else
                     {
-                        child.setParent( nextNode );
-                        frontier.add( child );
+                        // MAKE SURE THE CHILD ISN'T IN THE SAME PATH
+                        if ( !nextNode.inPath( child ) )
+                        {
+                            child.setParent( nextNode );
+                            frontier.add( (Node)child.clone() );
+                        }
                     }
                 }
 
@@ -89,7 +89,7 @@ public class Search
 
                 // ADD THE NODE INTO THE BEAM, IF IT'S NOT ALREADY THERE
                 if ( !beam.contains( nextNode ) )
-                    beam.add( nextNode );
+                    beam.add( (Node)nextNode.clone() );
             }
 
             frontier.clear();
@@ -142,9 +142,6 @@ public class Search
         }
 
 
-
-
-
         return paths;
     }
 
@@ -187,17 +184,19 @@ public class Search
 
     public static void printPaths( List<List<String>> paths, String goal )
     {
-        System.out.println("-------------------------------");
         for ( List<String> nextPath : paths )
         {
             if ( nextPath.contains(goal) )
+            {
+                System.out.println("\n-------------------------------");
                 System.out.print("SOLUTION PATH: ");
+            }
             else
-                System.out.print("PARTIAL PATH:  ");
+                System.out.print("\nPARTIAL PATH:  ");
             for ( String next : nextPath )
                 System.out.print( next + " " );
-            System.out.println("\n-------------------------------\n");
         }
+        System.out.println("\n-------------------------------\n");
     }
 
 //---------------------------------------------------------------------------

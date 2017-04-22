@@ -97,7 +97,6 @@ public class BeamSearch
         System.out.println("   GOAL NODE IS: " + goal);
         System.out.println("  BEAM WIDTH IS: " + k);
         System.out.println("-------------------------------");
-
     }
 
 //---------------------------------------------------------------------------
