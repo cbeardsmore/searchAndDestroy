@@ -74,6 +74,7 @@ public class BeamSearch
         // PERFROM THE ACTUAL BEAM SEARCH, CHECKING FOR ERRORS
         try
         {
+            printSummary( graph, initial, goal, k );
             paths = Search.beamSearch( graph, initial, goal, k, flag );
         }
         catch ( Exception e)
@@ -84,9 +85,7 @@ public class BeamSearch
         }
 
         // DO STUFF WITH THE FINAL PATHS
-        printSummary( graph, initial, goal, k );
         Search.printPaths( paths, goal );
-        System.out.println("\n-------------------------------");
     }
 
 //---------------------------------------------------------------------------
@@ -96,8 +95,8 @@ public class BeamSearch
         System.out.println("\n----------BEAM SEARCH----------");
         System.out.println("INITIAL NODE IS: " + initial);
         System.out.println("   GOAL NODE IS: " + goal);
-        System.out.println("  BEAM WIDTH IS: " + k + "\n");
-        System.out.println("\n-------------------------------");
+        System.out.println("  BEAM WIDTH IS: " + k);
+        System.out.println("-------------------------------");
 
     }
 

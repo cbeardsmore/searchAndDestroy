@@ -101,7 +101,6 @@ public class FileIO
     }
 
 //---------------------------------------------------------------------------
-
     //NAME: parseHeuristic()
     //IMPORT: line (String)
     //PURPOSE: Parse a given line with format <NODE WEIGHT>

@@ -16,7 +16,7 @@ public class Search
 
 //---------------------------------------------------------------------------
     //NAME: beamSearch()
-    //IMPORT: graph (Graph), initial (int), goal (int), k (int)
+    //IMPORT: graph (Graph), initial (int), goal (int), k (int), museum (boolean)
     //EXPORT: path to goal (List<Node>)
     //PURPOSE: Perform beam informed search on the graph
 
@@ -31,6 +31,7 @@ public class Search
 
         // ENSURE ALL FIELDS ARE VALID BEFORE CONTINUING
         validateFields( graph, initial, goal, k );
+
         // SET THE HEURISTIC OF THE GOAL AND INITIAL NODES
         graph.getNode(initial).setHeuristic(Integer.MAX_VALUE);
         graph.getNode(goal).setHeuristic(0);
@@ -41,11 +42,8 @@ public class Search
         // LOOP UNTIL GOAL FOUND OR THE BEAM BECOMES EMPTY
         while ( !done )
         {
-
-            System.out.print("BEAM:");
-            for ( Node next : beam )
-                System.out.print( " " + next.getName() );
-            System.out.print("\n");
+            // PRINT THE BEAM
+            printCollection( "BEAM", beam );
 
             //LOOP WHILE THE BEAM STILL HAS NODES WITHIN IT
             while ( !beam.isEmpty() )
@@ -79,10 +77,8 @@ public class Search
 
             }
 
-            System.out.print("FRONTIER:");
-            for ( Node next : frontier )
-                System.out.print( " " + next.getName() );
-            System.out.print("\n");
+            // PRINT THE FRONTIER
+            printCollection( "FRONTIER", frontier );
 
             // ADD THE k NEXT ITEMS INTO THE BEAM
             int curr = 0;
@@ -141,7 +137,7 @@ public class Search
                 paths.add( createPath(next) );
 
 
-            
+
 
         }
 
@@ -150,6 +146,16 @@ public class Search
 
 
         return paths;
+    }
+
+//---------------------------------------------------------------------------
+
+    public static void printCollection( String label, Collection<Node> collect )
+    {
+        System.out.print( label + ": ");
+        for ( Node next : collect )
+            System.out.print( next.getName() + " " );
+        System.out.print("\n");
     }
 
 //---------------------------------------------------------------------------
@@ -175,9 +181,13 @@ public class Search
     }
 
 //---------------------------------------------------------------------------
+    //NAME: printPaths()
+    //IMPORT: paths (List<List<String>>), goal (String)
+    //PURPOSE: Print all paths within the List of paths
 
     public static void printPaths( List<List<String>> paths, String goal )
     {
+        System.out.println("-------------------------------");
         for ( List<String> nextPath : paths )
         {
             if ( nextPath.contains(goal) )
@@ -186,16 +196,14 @@ public class Search
                 System.out.print("PARTIAL PATH:  ");
             for ( String next : nextPath )
                 System.out.print( next + " " );
-            System.out.print("\n");
+            System.out.println("\n-------------------------------\n");
         }
-        System.out.println("--------------------------------\n");
     }
 
 //---------------------------------------------------------------------------
     //NAME: validateFields()
     //IMPORT: graph (Graph), initial (int), goal (int), k (int)
-    //PURPOSE: Validate imports to the beam search algorithm to check all
-    //         the error checking contained in one spot
+    //PURPOSE: Validate imports to the search algorithms to check all
 
     private static void validateFields( Graph graph, String initial, String goal, int k )
     {
@@ -206,7 +214,7 @@ public class Search
         if ( graph.getNode(goal) == null )
             throw new IllegalArgumentException("GOAL NODE DOESN'T EXIST");
         if ( ( k < MIN_BEAM ) || ( k > MAX_BEAM ) )
-            throw new IllegalArgumentException("INVALID BEAM VALUE");
+            throw new IllegalArgumentException("INVALID k VALUE");
     }
 
 //---------------------------------------------------------------------------

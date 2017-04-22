@@ -50,6 +50,8 @@ public class Node implements Comparable<Node>
 
     public void setName(String inName)    { name = inName; }
     public void setParent(Node inPar)  { parent = inPar; }
+    public void setNodes(List<Node> inNodes)  { nodeList = inNodes; }
+    public void setEdges(List<Edge> inEdges)  { edgeList = inEdges; }
     public void setHeuristic(double inHeur) { heuristic = inHeur; }
 
 //---------------------------------------------------------------------------
@@ -109,20 +111,6 @@ public class Node implements Comparable<Node>
     }
 
 //---------------------------------------------------------------------------
-    //NAME: toString
-    //EXPORT: state (String)
-    //PURPOSE: Export state in readable String format
-
-    public String toString()
-    {
-        String state = "NAME: " + name + " -> ";
-        state += connectedTo();
-        state += "\n\tH: " + heuristic;
-        state += " PARENT: " + parent.getName() + "\n";
-        return state;
-    }
-
-//---------------------------------------------------------------------------
     //NAME: connectedTo()
     //EXPORT: connected (String)
     //PURPOSE: Return list of all connected node names
@@ -133,6 +121,49 @@ public class Node implements Comparable<Node>
         Collections.sort(nodeList);
         for ( Node next : nodeList )
             state += next.getName() + " ";
+        return state;
+    }
+
+//---------------------------------------------------------------------------
+    //NAME: inPath()
+    //IMPORT: inNode (Node)
+    //EXPORT: found (boolean)
+    //PURPOSE: Check if inNode is in the current path from this Node
+
+    public boolean inPath( Node inNode )
+    {
+        if ( this.name.equals( inNode.getName() ) )
+            return true;
+        if ( parent == null )
+            return false;
+        return inPath(parent);
+    }
+
+//---------------------------------------------------------------------------
+    //NAME: clone()
+    //EXPORT: newNode (Object)
+
+    public Object clone()
+    {
+        Node newNode = new Node(name);
+        newNode.setParent(parent);
+        newNode.setNodes(nodeList);
+        newNode.setEdges(edgeList);
+        newNode.setHeuristic(heuristic);
+        return newNode;
+    }
+
+//---------------------------------------------------------------------------
+    //NAME: toString
+    //EXPORT: state (String)
+    //PURPOSE: Export state in readable String format
+
+    public String toString()
+    {
+        String state = "NAME: " + name + " -> ";
+        state += connectedTo();
+        state += "\n\tH: " + heuristic;
+        state += " PARENT: " + parent.getName() + "\n";
         return state;
     }
 

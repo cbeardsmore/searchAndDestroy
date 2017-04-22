@@ -4,14 +4,8 @@
 *	UNIT: AMI300
 *	PURPOSE: Represents a single node for a SMA* search
 *   LAST MOD: 22/04/07
-*   REQUIRES: List, LinkedList, Collections
+*   REQUIRES: NONE
 ***************************************************************************/
-
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Collections;
-
-//---------------------------------------------------------------------------
 
 public class AlimNode extends Node
 {
