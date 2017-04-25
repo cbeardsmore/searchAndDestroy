@@ -42,7 +42,7 @@ public class Node implements Comparable<Node>
         nodeList = new LinkedList<Node>();
         edgeList = new LinkedList<Edge>();
         heuristic = DEFAULT;
-        best = DEFAULT;
+        best = Integer.MAX_VALUE;
         cost = DEFAULT;
         depth = DEFAULT;
         childCounter = DEFAULT;
@@ -92,7 +92,7 @@ public class Node implements Comparable<Node>
 
     public void setBest(double inBest)
     {
-        best = Math.max( best, inBest );
+        best = Math.min( best, inBest );
     }
 
 //---------------------------------------------------------------------------

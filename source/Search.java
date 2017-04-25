@@ -122,22 +122,27 @@ public class Search
 
         // ADD THE FIRST NODE INTO THE QUEUE + INITIAL SET ITS COST
         Node initNode = graph.getNode(initial);
+        initNode.setDepth(1);
         frontier.addFirst( initNode );
 
         while ( !done )
         {
+            // IF THE QUEUE IS EMPTY, NO SOLUTION IS POSSIBLE
+            if ( frontier.isEmpty() )
+            {
+                System.out.println("FAILURE: NO SOLUTION");
+                return null;
+            }
+
             System.out.println("-------------------------------");
             printCollection( "FRONTIER: ", frontier );
             for ( Node next : frontier )
-                System.out.println( next.toString() );
+                if ( next != null )
+                    System.out.println( next.toString() );
             System.out.println("-------------------------------");
 
             Scanner sc = new Scanner(System.in);
             sc.nextInt();
-
-            // IF THE QUEUE IS EMPTY, NO SOLUTION IS POSSIBLE
-            if ( frontier.isEmpty() )
-                return null;
 
             // GET THE BEST NODE - LOWEST f-COST AND HIGHEST DEPTH
             Collections.sort( frontier, Node.NodeComparatorAStar );
@@ -145,30 +150,33 @@ public class Search
 
             // PERFORM THE GOAL TEST WHEN PULLED FROM FRONTIER
             if ( graph.getNode(goal) == front )
-                return null;
-
-            Node succ = null;
-
-            // CALCULATE ACTUAL A* COST VALUE
-            if ( front.hasNextChild() )
             {
-                succ = front.getNextChild();
-                while ( ( succ != null ) && ( front.inPath( succ ) && ( !frontier.contains( succ ) ) ) )
-                    succ = front.getNextChild();
+                System.out.println("SUCCESS: SOLUTION FOUND");
+                return null;
             }
 
+            // IF DEPTH IS TOO LARGE WE ROLL BACK THE CURRENT FRONT, ITS USELESS
+            if ( front.getDepth() >= numNodes )
+            {
+                front.setCost( Double.MAX_VALUE );
+                backup(front);
+                frontier.remove(front);
+                continue;
+            }
+
+            // GET THE NEXT POSSIBLE CHILD FROM THE FRONT NODE
+            Node succ = null;
+            succ = front.getNextChild();
+            while ( ( succ != null ) && ( front.inPath( succ ) && ( !frontier.contains( succ ) ) ) )
+                succ = front.getNextChild();
+
+            // IF A VALID CHILD EXISTS
             if ( succ != null )
             {
                 succ.setParent( front );
                 succ.setDepth( front.getDepth() + 1 );
                 double cost = front.getCost() + front.getEdgeCost( succ );
                 succ.setCost( cost );
-            }
-            // IF NO MORE CHILDREN, BACKUP THE NODE
-            else
-            {
-                backup( front );
-                frontier.remove( front );
             }
 
             // MEMORY IS FULL SO WE ROLLBACK THE WORST COST IN FRONTIER
@@ -178,8 +186,6 @@ public class Search
                 Node worst = frontier.removeLast();
                 backup( worst );
                 Node parent = worst.getParent();
-                if ( !frontier.contains( parent ) )
-                    frontier.addLast(parent);
             }
 
 
@@ -195,10 +201,11 @@ public class Search
 
     private static void backup( Node backupNode )
     {
+        System.out.println("BACKUP NODE: " + backupNode.getName() );
         // IF NODE IS COMPLETE AND HAS A PARENT
         if ( backupNode.getParent() != null )
         {
-            backupNode.getParent().setBest( backupNode.getCost() );
+            backupNode.getParent().setBest( backupNode.aCost() );
         }
     }
 
@@ -208,7 +215,8 @@ public class Search
     {
         System.out.print( label + ": ");
         for ( Node next : collect )
-            System.out.print( next.getName() + " " );
+            if ( next != null )
+                System.out.print( next.getName() + " " );
         System.out.print("\n");
     }
 
