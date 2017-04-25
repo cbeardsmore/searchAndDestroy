@@ -111,43 +111,91 @@ public class Search
     public static List<List<String>> alimSearch( Graph graph, String initial, String goal, int numNodes )
     {
         List<List<String>> paths = new LinkedList<>();
-        Queue<Node> frontier = new PriorityQueue<>();
-        Queue<Node> open = new PriorityQueue<>();
+        LinkedList<Node> frontier = new LinkedList<>();
         boolean done = false;
         int count = 0;
 
         // ENSURE ALL FIELDS ARE VALID BEFORE CONTINUING
         validateFields( graph, initial, goal, numNodes );
         // SET THE HEURISTIC OF THE GOAL AND INITIAL NODES
-        graph.getNode(initial).setHeuristic(Integer.MAX_VALUE);
         graph.getNode(goal).setHeuristic(0);
 
+        // ADD THE FIRST NODE INTO THE QUEUE + INITIAL SET ITS COST
+        Node initNode = graph.getNode(initial);
+        frontier.addFirst( initNode );
 
         while ( !done )
         {
-            // RUN OUT OF NODES TO CONSIDER, NO SOLUTION
-            if ( open.isEmpty() )
+            System.out.println("-------------------------------");
+            printCollection( "FRONTIER: ", frontier );
+            Scanner sc = new Scanner(System.in);
+            sc.nextInt();
+            for ( Node next : frontier )
+                System.out.println( next.toString() );
+            System.out.println("-------------------------------");
+
+            // IF THE QUEUE IS EMPTY, NO SOLUTION IS POSSIBLE
+            if ( frontier.isEmpty() )
                 return null;
 
-            // GET THE CURRENT BEST OPTION
-            Node next = open.peek();
+            // GET THE BEST NODE - LOWEST f-COST AND HIGHEST DEPTH
+            Collections.sort( frontier );
+            Node front = frontier.peekFirst();
 
-            // GOAL TEST
-            if ( next == graph.getNode(goal) )
-                paths.add( createPath(next) );
+            // PERFORM THE GOAL TEST WHEN PULLED FROM FRONTIER
+            if ( graph.getNode(goal) == front )
+                return null;
+
+            // GET NEXT SUCCESSOR FROM THE FRONT NODE
+            Node succ = front.getNextChild();
+            while ( front.inPath( succ ) )
+                succ = front.getNextChild();
+
+            // CALCULATE ACTUAL A* COST VALUE
+            if ( succ != null )
+            {
+                succ.setParent( front );
+                succ.setDepth( front.getDepth() + 1 );
+                double cost = front.getCost() + front.getEdgeCost( succ );
+                succ.setCost( cost );
+            }
+            // IF NO MORE CHILDREN, BACKUP THE NODE
+            else
+                backup( front );
+
+            // MEMORY IS FULL SO WE ROLLBACK THE WORST COST IN FRONTIER
+            if ( frontier.size() == numNodes )
+            {
+                Collections.sort( frontier );
+                Node worst = frontier.removeLast();
+                backup( worst );
+                Node parent = worst.getParent();
+                if ( !frontier.contains( parent ) )
+                    frontier.addLast(parent);
+            }
 
 
-
-
+            // INSERT NEXT SUCCESSOR INTO THE FRONTIER
+            frontier.addLast( succ );
         }
-
 
         return paths;
     }
 
 //---------------------------------------------------------------------------
 
-    public static void printCollection( String label, Collection<Node> collect )
+    private static void backup( Node backupNode )
+    {
+        // IF NODE IS COMPLETE AND HAS A PARENT
+        if ( backupNode.getParent() != null )
+        {
+            backupNode.getParent().setBest( backupNode.getCost() );
+        }
+    }
+
+//---------------------------------------------------------------------------
+
+    private static void printCollection( String label, Collection<Node> collect )
     {
         System.out.print( label + ": ");
         for ( Node next : collect )

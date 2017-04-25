@@ -14,7 +14,7 @@ public class Edge
     //CLASSFIELDS
     private Node source;
     private Node sink;
-    private int weight;
+    private double weight;
 
 //---------------------------------------------------------------------------
     //ALTERNATE CONSTRUCTOR
@@ -36,7 +36,7 @@ public class Edge
 
     public Node getSource()        { return source; }
     public Node getSink()          { return sink; }
-    public int getWeight()         { return weight; }
+    public double getWeight()         { return weight; }
 
 //---------------------------------------------------------------------------
     //SETTERS

@@ -18,12 +18,18 @@ public class Node implements Comparable<Node>
     //CLASSFIELDS
     private String name;
     private Node parent;
-    private List<Node> nodeList;
-    private List<Edge> edgeList;
     private double heuristic;
+    protected List<Node> nodeList;
+    protected List<Edge> edgeList;
+
+    //CLASSFIELDS SPECIFIC TO SMA*
+    private double best;
+    private double cost;
+    private int depth;
+    private int childCounter;
 
     //CONSTANTS
-    public static final int DEFAULT = -1;
+    public static final int DEFAULT = 0;
 
 //---------------------------------------------------------------------------
     //ALTERNATE CONSTRUCTOR
@@ -35,24 +41,58 @@ public class Node implements Comparable<Node>
         nodeList = new LinkedList<Node>();
         edgeList = new LinkedList<Edge>();
         heuristic = DEFAULT;
+        best = DEFAULT;
+        cost = DEFAULT;
+        depth = DEFAULT;
+        childCounter = DEFAULT;
+    }
+
+//---------------------------------------------------------------------------
+    //ALTERNATE CONSTRUCTOR
+
+    public Node( Node inNode )
+    {
+        name = inNode.getName();
+        parent = inNode.getParent();
+        nodeList = inNode.getNodes();
+        edgeList = inNode.getEdges();
+        heuristic = inNode.getHeuristic();
+        best = inNode.getBest();
+        cost = inNode.getCost();
+        depth = inNode.getDepth();
+        childCounter = inNode.getChildCount();
     }
 
 //---------------------------------------------------------------------------
     //GETTERS
 
     public String getName()         { return name; }
-    public Node getParent()      { return parent; }
-    public List<Edge> getEdges() { return edgeList; }
+    public Node getParent()         { return parent; }
+    public List<Edge> getEdges()    { return edgeList; }
     public double getHeuristic()    { return heuristic; }
+    public double getBest()         { return best; }
+    public double getCost()         { return cost; }
+    public int getDepth()           { return depth; }
+    public int getChildCount()      { return childCounter; }
 
 //---------------------------------------------------------------------------
     //SETTERS
 
-    public void setName(String inName)    { name = inName; }
-    public void setParent(Node inPar)  { parent = inPar; }
+    public void setName(String inName)        { name = inName; }
+    public void setParent(Node inPar)         { parent = inPar; }
     public void setNodes(List<Node> inNodes)  { nodeList = inNodes; }
     public void setEdges(List<Edge> inEdges)  { edgeList = inEdges; }
-    public void setHeuristic(double inHeur) { heuristic = inHeur; }
+    public void setHeuristic(double inHeur)   { heuristic = inHeur; }
+    public void setCost(double inCost)        { cost = inCost; }
+    public void setDepth(int inDepth)         { depth = inDepth; }
+    public void setCCount(int inCCount)       { childCounter = inCCount; }
+
+//---------------------------------------------------------------------------
+
+    public void setBest(double inBest)
+    {
+        best = Math.max( best, inBest );
+    }
 
 //---------------------------------------------------------------------------
     //NAME: getNodes()
@@ -73,6 +113,15 @@ public class Node implements Comparable<Node>
     public void addNode(Node inNode)
     {
         nodeList.add( inNode );
+        Collections.sort(nodeList);
+    }
+
+//---------------------------------------------------------------------------
+
+    public void removeNode(Node inNode)
+    {
+        nodeList.remove( inNode );
+        Collections.sort(nodeList);
     }
 
 //---------------------------------------------------------------------------
@@ -118,10 +167,29 @@ public class Node implements Comparable<Node>
     public String connectedTo()
     {
         String state = "";
-        Collections.sort(nodeList);
         for ( Node next : nodeList )
             state += next.getName() + " ";
         return state;
+    }
+
+//---------------------------------------------------------------------------
+
+    public boolean hasNextChild()
+    {
+        boolean hasChild = true;
+        if ( ( childCounter < 0 ) || ( childCounter > nodeList.size() ) )
+            hasChild = false;
+        return hasChild;
+    }
+
+//---------------------------------------------------------------------------
+
+    public Node getNextChild()
+    {
+        Node next = null;
+        if ( hasNextChild() )
+            next = nodeList.get(childCounter);
+        return next;
     }
 
 //---------------------------------------------------------------------------
@@ -140,6 +208,24 @@ public class Node implements Comparable<Node>
     }
 
 //---------------------------------------------------------------------------
+
+    public double getEdgeCost( Node eNode )
+    {
+        for ( Edge next : edgeList )
+            if ( ( next.getSource() == eNode ) || ( next.getSink() == eNode ) )
+                return next.getWeight();
+
+        return 0.0;
+    }
+
+//---------------------------------------------------------------------------
+
+    public double aCost()
+    {
+        return cost + heuristic;
+    }
+
+//---------------------------------------------------------------------------
     //NAME: clone()
     //EXPORT: newNode (Object)
 
@@ -151,6 +237,10 @@ public class Node implements Comparable<Node>
         newNode.setNodes(nodeList);
         newNode.setEdges(edgeList);
         newNode.setHeuristic(heuristic);
+        newNode.setBest(best);
+        newNode.setCost(cost);
+        newNode.setDepth(depth);
+        newNode.setCCount(childCounter);
         return newNode;
     }
 
@@ -163,8 +253,13 @@ public class Node implements Comparable<Node>
     {
         String state = "NAME: " + name + " -> ";
         state += connectedTo();
-        state += "\n\tH: " + heuristic;
-        state += " PARENT: " + parent.getName() + "\n";
+        state += "\n\tH: " + heuristic + " PARENT: ";
+        if ( parent != null )
+            state += parent.getName() + "\n";
+        else
+            state += "null\n";
+        state += "\tBEST: " + best + " COST: " + cost;
+        state += " DEPTH: " + depth + "\n";
         return state;
     }
 
