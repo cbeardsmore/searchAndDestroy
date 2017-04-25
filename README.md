@@ -1,7 +1,7 @@
 # searchAndDestroy
 
 -
-######Artificial and Machine Intelligence 300: Search Techniques
+#####Artificial and Machine Intelligence 300: Search Techniques
 -
 
 #####Purpose
