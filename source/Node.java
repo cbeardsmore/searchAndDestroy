@@ -10,6 +10,7 @@
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Collections;
+import java.util.Comparator;
 
 //---------------------------------------------------------------------------
 
@@ -156,8 +157,31 @@ public class Node implements Comparable<Node>
     @Override
     public int compareTo(Node inNode)
     {
-        return (int)Math.ceil(this.heuristic - inNode.heuristic);
+        return this.name.compareTo( inNode.getName() );
     }
+
+//---------------------------------------------------------------------------
+
+    public static Comparator<Node> NodeComparatorBeam = new Comparator<Node>()
+    {
+	    public int compare(Node n1, Node n2)
+        {
+             return (int)Math.ceil( n1.getHeuristic() - n2.getHeuristic() );
+        }
+	};
+
+//---------------------------------------------------------------------------
+
+    public static Comparator<Node> NodeComparatorAStar = new Comparator<Node>()
+    {
+	    public int compare(Node n1, Node n2)
+        {
+            int value = (int)Math.ceil( n1.aCost() - n2.aCost() );
+            if ( value == 0 )
+                value = n1.getDepth() - n2.getDepth();
+            return value;
+        }
+	};
 
 //---------------------------------------------------------------------------
     //NAME: connectedTo()
@@ -167,6 +191,7 @@ public class Node implements Comparable<Node>
     public String connectedTo()
     {
         String state = "";
+        Collections.sort( nodeList );
         for ( Node next : nodeList )
             state += next.getName() + " ";
         return state;
@@ -177,7 +202,7 @@ public class Node implements Comparable<Node>
     public boolean hasNextChild()
     {
         boolean hasChild = true;
-        if ( ( childCounter < 0 ) || ( childCounter > nodeList.size() ) )
+        if ( ( childCounter < 0 ) || ( childCounter >= nodeList.size() ) )
             hasChild = false;
         return hasChild;
     }
@@ -189,6 +214,7 @@ public class Node implements Comparable<Node>
         Node next = null;
         if ( hasNextChild() )
             next = nodeList.get(childCounter);
+        childCounter++;
         return next;
     }
 

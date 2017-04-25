@@ -24,7 +24,7 @@ public class Search
                                                int k, boolean museum )
     {
         List<List<String>> paths = new LinkedList<>();
-        Queue<Node> frontier = new PriorityQueue<>();
+        Queue<Node> frontier = new PriorityQueue<>( 11, Node.NodeComparatorBeam);
         Queue<Node> beam = new PriorityQueue<>();
         boolean done = false;
 
@@ -128,30 +128,35 @@ public class Search
         {
             System.out.println("-------------------------------");
             printCollection( "FRONTIER: ", frontier );
-            Scanner sc = new Scanner(System.in);
-            sc.nextInt();
             for ( Node next : frontier )
                 System.out.println( next.toString() );
             System.out.println("-------------------------------");
+
+            Scanner sc = new Scanner(System.in);
+            sc.nextInt();
 
             // IF THE QUEUE IS EMPTY, NO SOLUTION IS POSSIBLE
             if ( frontier.isEmpty() )
                 return null;
 
             // GET THE BEST NODE - LOWEST f-COST AND HIGHEST DEPTH
-            Collections.sort( frontier );
+            Collections.sort( frontier, Node.NodeComparatorAStar );
             Node front = frontier.peekFirst();
 
             // PERFORM THE GOAL TEST WHEN PULLED FROM FRONTIER
             if ( graph.getNode(goal) == front )
                 return null;
 
-            // GET NEXT SUCCESSOR FROM THE FRONT NODE
-            Node succ = front.getNextChild();
-            while ( front.inPath( succ ) )
-                succ = front.getNextChild();
+            Node succ = null;
 
             // CALCULATE ACTUAL A* COST VALUE
+            if ( front.hasNextChild() )
+            {
+                succ = front.getNextChild();
+                while ( ( succ != null ) && ( front.inPath( succ ) && ( !frontier.contains( succ ) ) ) )
+                    succ = front.getNextChild();
+            }
+
             if ( succ != null )
             {
                 succ.setParent( front );
@@ -161,12 +166,15 @@ public class Search
             }
             // IF NO MORE CHILDREN, BACKUP THE NODE
             else
+            {
                 backup( front );
+                frontier.remove( front );
+            }
 
             // MEMORY IS FULL SO WE ROLLBACK THE WORST COST IN FRONTIER
             if ( frontier.size() == numNodes )
             {
-                Collections.sort( frontier );
+                Collections.sort( frontier, Node.NodeComparatorAStar );
                 Node worst = frontier.removeLast();
                 backup( worst );
                 Node parent = worst.getParent();
@@ -176,7 +184,8 @@ public class Search
 
 
             // INSERT NEXT SUCCESSOR INTO THE FRONTIER
-            frontier.addLast( succ );
+            if ( succ != null )
+                frontier.addLast( succ );
         }
 
         return paths;
