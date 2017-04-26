@@ -44,7 +44,7 @@ public class Node implements Comparable<Node>
         nodeList = new LinkedList<Node>();
         edgeList = new LinkedList<Edge>();
         heuristic = DEFAULT;
-        best = 1000000.0;
+        best = Double.MAX_VALUE;
         fn = DEFAULT;
         cost = DEFAULT;
         depth = DEFAULT;
@@ -101,7 +101,12 @@ public class Node implements Comparable<Node>
 
     public void setBest(double inBest)
     {
-        best = Math.min( best, inBest );
+        if ( inBest == Double.POSITIVE_INFINITY )
+            best = inBest;
+        if ( inBest == Double.MAX_VALUE )
+            best = inBest;
+        else
+            best = Math.min( best, inBest );
     }
 
     public void setFN(double inFN)
@@ -215,6 +220,7 @@ public class Node implements Comparable<Node>
 
     public void reset()
     {
+        System.out.println("RESETTING NODE: " + this.name );
         childCounter = DEFAULT;
         fn = best;
     }
@@ -293,15 +299,14 @@ public class Node implements Comparable<Node>
 
     public String toString()
     {
-        String state = "NAME: " + name + " -> ";
-        state += connectedTo();
-        state += "\n\tH: " + heuristic + " PARENT: ";
+        String state = name + " -> " + connectedTo();
         if ( parent != null )
-            state += parent.getName() + "\n";
+            state += "\t\t(P=" + parent.getName();
         else
-            state += "null\n";
-        state += "\tBEST: " + best + " COST: " + cost;
-        state += "\n\tFN: " + fn + " DEPTH: " + depth + " VISIT: " + visited + "\n";
+            state += "\t\t(P=null";
+        state += ")\n\tDEPTH: " + depth + " VISIT: " + visited;
+        state += " H:" + heuristic + " COST: " + cost;
+        state += "\n\tFN: " + fn + " BEST: " + best;
         return state;
     }
 

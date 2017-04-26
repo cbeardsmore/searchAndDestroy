@@ -13,6 +13,10 @@ public class Search
 {
     public static final int MIN_BEAM = 0;
     public static final int MAX_BEAM = 10000;
+    public static final int INITIAL_DEPTH = 1;
+    public static final int GOAL_HEURISTIC = 0;
+    public static final int INIT_HEURISTIC = Integer.MAX_VALUE;
+    public static final int MAX_BEST = 100000;
 
 //---------------------------------------------------------------------------
     //NAME: beamSearch()
@@ -32,8 +36,8 @@ public class Search
         validateFields( graph, initial, goal, k );
 
         // SET THE HEURISTIC OF THE GOAL AND INITIAL NODES
-        graph.getNode(initial).setHeuristic(Integer.MAX_VALUE);
-        graph.getNode(goal).setHeuristic(0);
+        graph.getNode(initial).setHeuristic( INIT_HEURISTIC );
+        graph.getNode(goal).setHeuristic( GOAL_HEURISTIC );
 
         // ADD THE INITIAL NODE TO THE QUEUE
         beam.add( graph.getNode(initial) );
@@ -74,7 +78,6 @@ public class Search
                         }
                     }
                 }
-
             }
 
             // PRINT THE FRONTIER
@@ -119,11 +122,12 @@ public class Search
         // ENSURE ALL FIELDS ARE VALID BEFORE CONTINUING
         validateFields( graph, initial, goal, numNodes );
         // SET THE HEURISTIC OF THE GOAL AND INITIAL NODES
-        graph.getNode(goal).setHeuristic(0);
+        graph.getNode(goal).setHeuristic( GOAL_HEURISTIC );
 
-        // ADD THE FIRST NODE INTO THE QUEUE + INITIAL SET ITS COST
+        // ADD THE FIRST NODE INTO THE QUEUE + SET ITS INITIAL PARAMETERS
+        Node goalNode = graph.getNode(goal);
         Node initNode = graph.getNode(initial);
-        initNode.setDepth(1);
+        initNode.setDepth( INITIAL_DEPTH );
         initNode.setFN( initNode.getHeuristic() );
         frontier.addFirst( initNode );
         leafNodes.addFirst( initNode );
@@ -131,21 +135,20 @@ public class Search
         while ( !done )
         {
             // IF THE QUEUE IS EMPTY, NO SOLUTION IS POSSIBLE
-            if ( ( frontier.isEmpty() ) || ( initNode.getFN() >= ( Double.MAX_VALUE - 1 ) ) )
+            if ( frontier.isEmpty() )
+            {
+                System.out.println("FAILURE: NO SOLUTION, ALL PATHS EXPLORED");
+                return null;
+            }
+            // IF THE ROOT NODE IS INIFINITY, NO PATHS EXIST
+            if ( initNode.getFN() == ( Double.POSITIVE_INFINITY ) )
             {
                 System.out.println("FAILURE: NO SOLUTION, ROOT IS INFINITY");
                 return null;
             }
 
-            System.out.println("-------------------------------");
-            printCollection( "FRONTIER: ", frontier );
-            for ( Node next : frontier )
-                if ( next != null )
-                    System.out.println( next.toString() );
-            System.out.println("-------------------------------");
-            printCollection( "LEAF NODES: ", leafNodes );
-            System.out.println("-------------------------------");
-
+            // PRINT FRONTIER + LEAF NODES LISTS
+            printSMAStar( frontier, leafNodes );
             Scanner sc = new Scanner(System.in);
             sc.nextInt();
 
@@ -154,74 +157,59 @@ public class Search
             Node front = frontier.peekFirst();
             front.setVisited();
 
-            // PERFORM THE GOAL TEST WHEN PULLED FROM FRONTIER
-            if ( graph.getNode(goal) == front )
+            // THE GOAL TEST
+            if ( front == goalNode )
             {
                 System.out.println("SUCCESS: SOLUTION FOUND");
-                return null;
+                paths.add( createPath( goalNode ) );
+                break;
             }
 
-            // MEMORY IS FULL SO WE ROLLBACK THE WORST COST IN FRONTIER
+            // MEMORY IS FULL SO WE ROLLBACK THE WORST OF THE LEAF NODES
             if ( frontier.size() >= numNodes )
             {
                 Collections.sort( leafNodes, Node.NodeComparatorAStar );
                 Node worst = leafNodes.removeLast();
-                frontier.remove(worst);
-                backup( worst );
-                Node parent = worst.getParent();
-
-                // if we have no kids in leafNodes, the parent is now a leaf!
-                boolean noKids = true;
-                for ( Node next : leafNodes )
-                    if ( next.getParent() == parent )
-                        noKids = false;
-                if ( noKids )
-                    leafNodes.add(parent);
+                backup( worst, frontier );
+                isParentLeaf( worst.getParent(), leafNodes );
             }
 
             // GET THE NEXT POSSIBLE CHILD FROM THE FRONT NODE
-            Node succ = null;
-            succ = front.getNextChild();
-
+            Node succ = front.getNextChild();
+            // WHILE MORE CHILDREN, AND THE CHILD IS IN THE PATH OR THE FRONTIER, SKIP
             while ( ( succ != null ) && ( ( front.inPath( succ ) ) || ( frontier.contains( succ ) ) ) )
+            {
+                if ( frontier.contains( succ ) )
+                    if ( succ.getParent() != null )
+                        succ.getParent().setBest( succ.getFN() );
                 succ = front.getNextChild();
+            }
 
-
-            // IF A VALID CHILD EXISTS
+            // A VALID CHILD EXISTS, LETS EXPLORE IT
             if ( succ != null )
             {
+                // PARENT NO LONGER A LEAF
                 leafNodes.remove(front);
                 leafNodes.add(succ);
-                succ.setParent( front );
-                succ.setDepth( front.getDepth() + 1 );
-                double cost = front.getCost() + front.getEdgeCost( succ );
-                succ.setCost( cost );
-                if ( !succ.isVisited() )
-                    succ.setFN( cost + succ.getHeuristic() );
+
+                // SET THE SUCCESSOR VALUES
+                System.out.println("VISIT SUCCESSOR: " + succ.getName() );
+                setSuccessor( succ, front );
 
                 // IF DEPTH IS TOO LARGE WE ROLL BACK THE CURRENT FRONT LEAF NODE, ITS USELESS
                 if ( succ.getDepth() >= numNodes )
                 {
-                    succ.setFN( Double.MAX_VALUE );
-                    frontier.remove(succ);
+                    // SET TO INFINITY SO ITS ALWAYS CULLED FIRST
+                    succ.setFN(Double.POSITIVE_INFINITY);
                     leafNodes.remove(succ);
-                    backup(succ);
-
-                    // if we have no kids in leafNodes, the parent is now a leaf!
-                    boolean noKids = true;
-                    for ( Node next : leafNodes )
-                        if ( next.getParent() == front )
-                            noKids = false;
-                    if ( noKids )
-                        leafNodes.add(front);
-
+                    backup(succ, frontier);
+                    isParentLeaf( front, leafNodes );
                     continue;
                 }
-
-                frontier.addLast(succ);
+                // IF VALID, ADD TO THE FRONTIER
+                else
+                    frontier.addLast(succ);
             }
-
-
             // NO CHILDREN, RESET ITERATOR AND UPDATE f(n) = BEST
             else
                 front.reset();
@@ -232,14 +220,52 @@ public class Search
 
 //---------------------------------------------------------------------------
 
-    private static void backup( Node backupNode )
+    private static void backup( Node backupNode, LinkedList<Node> frontier )
     {
         System.out.println("BACKUP NODE: " + backupNode.getName() );
-        // IF NODE IS COMPLETE AND HAS A PARENT
+        // BACK UP ITS fn COST TO ITS PARENTS BEST COST
         if ( backupNode.getParent() != null )
-        {
             backupNode.getParent().setBest( backupNode.getFN() );
-        }
+        // REMOVE IT FROM THE FRONTIER
+        frontier.remove( backupNode );
+    }
+
+//---------------------------------------------------------------------------
+
+    private static void setSuccessor( Node succ, Node parent )
+    {
+        succ.setParent( parent );
+        succ.setDepth( parent.getDepth() + 1 );
+        double cost = parent.getCost() + parent.getEdgeCost( succ );
+        succ.setCost( cost );
+        if ( !succ.isVisited() )
+            succ.setFN( cost + succ.getHeuristic() );
+        parent.setBest( succ.getFN() );
+    }
+
+//---------------------------------------------------------------------------
+
+    private static void isParentLeaf( Node parent, LinkedList<Node> leafNodes )
+    {
+        // IF THERE ARE NO KID LEAFS, THE PARENT IS NOW A LEAF
+        for ( Node next : leafNodes )
+            if ( next.getParent() == parent )
+                return;
+        leafNodes.add(parent);
+    }
+
+//---------------------------------------------------------------------------
+
+    private static void printSMAStar( LinkedList<Node> frontier, LinkedList<Node> leafNodes )
+    {
+        System.out.println("-------------------------------");
+        printCollection( "FRONTIER: ", frontier );
+        printCollection( "LEAF NODES: ", leafNodes );
+        System.out.println("-------------------------------");
+        for ( Node next : frontier )
+            if ( next != null )
+                System.out.println( next.toString() );
+        System.out.println("-------------------------------");
     }
 
 //---------------------------------------------------------------------------
