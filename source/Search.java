@@ -131,9 +131,9 @@ public class Search
         while ( !done )
         {
             // IF THE QUEUE IS EMPTY, NO SOLUTION IS POSSIBLE
-            if ( frontier.isEmpty() )
+            if ( ( frontier.isEmpty() ) || ( initNode.getFN() >= ( Double.MAX_VALUE - 1 ) ) )
             {
-                System.out.println("FAILURE: NO SOLUTION");
+                System.out.println("FAILURE: NO SOLUTION, ROOT IS INFINITY");
                 return null;
             }
 
@@ -152,23 +152,13 @@ public class Search
             // GET THE BEST NODE - LOWEST f-COST AND HIGHEST DEPTH
             Collections.sort( frontier, Node.NodeComparatorAStar );
             Node front = frontier.peekFirst();
+            front.setVisited();
 
             // PERFORM THE GOAL TEST WHEN PULLED FROM FRONTIER
             if ( graph.getNode(goal) == front )
             {
                 System.out.println("SUCCESS: SOLUTION FOUND");
                 return null;
-            }
-
-            // IF DEPTH IS TOO LARGE WE ROLL BACK THE CURRENT FRONT LEAF NODE, ITS USELESS
-            if ( front.getDepth() >= numNodes )
-            {
-                Collections.sort( leafNodes, Node.NodeComparatorAStar );
-                Node worst = leafNodes.removeLast();
-                worst.setFN( Double.MAX_VALUE );
-                frontier.remove(worst);
-                backup(worst);
-                continue;
             }
 
             // MEMORY IS FULL SO WE ROLLBACK THE WORST COST IN FRONTIER
@@ -179,13 +169,23 @@ public class Search
                 frontier.remove(worst);
                 backup( worst );
                 Node parent = worst.getParent();
+
+                // if we have no kids in leafNodes, the parent is now a leaf!
+                boolean noKids = true;
+                for ( Node next : leafNodes )
+                    if ( next.getParent() == parent )
+                        noKids = false;
+                if ( noKids )
+                    leafNodes.add(parent);
             }
 
             // GET THE NEXT POSSIBLE CHILD FROM THE FRONT NODE
             Node succ = null;
             succ = front.getNextChild();
-            while ( ( succ != null ) && ( front.inPath( succ ) && ( !frontier.contains( succ ) ) ) )
+
+            while ( ( succ != null ) && ( ( front.inPath( succ ) ) || ( frontier.contains( succ ) ) ) )
                 succ = front.getNextChild();
+
 
             // IF A VALID CHILD EXISTS
             if ( succ != null )
@@ -196,15 +196,35 @@ public class Search
                 succ.setDepth( front.getDepth() + 1 );
                 double cost = front.getCost() + front.getEdgeCost( succ );
                 succ.setCost( cost );
-                succ.setFN( cost + succ.getHeuristic() );
+                if ( !succ.isVisited() )
+                    succ.setFN( cost + succ.getHeuristic() );
+
+                // IF DEPTH IS TOO LARGE WE ROLL BACK THE CURRENT FRONT LEAF NODE, ITS USELESS
+                if ( succ.getDepth() >= numNodes )
+                {
+                    succ.setFN( Double.MAX_VALUE );
+                    frontier.remove(succ);
+                    leafNodes.remove(succ);
+                    backup(succ);
+
+                    // if we have no kids in leafNodes, the parent is now a leaf!
+                    boolean noKids = true;
+                    for ( Node next : leafNodes )
+                        if ( next.getParent() == front )
+                            noKids = false;
+                    if ( noKids )
+                        leafNodes.add(front);
+
+                    continue;
+                }
+
+                frontier.addLast(succ);
             }
-            // NO CHILDREN, RESET THAT SHIT
+
+
+            // NO CHILDREN, RESET ITERATOR AND UPDATE f(n) = BEST
             else
                 front.reset();
-
-            // INSERT NEXT SUCCESSOR INTO THE FRONTIER
-            if ( succ != null )
-                frontier.addLast( succ );
         }
 
         return paths;
@@ -292,6 +312,8 @@ public class Search
             throw new IllegalArgumentException("GOAL NODE DOESN'T EXIST");
         if ( ( k < MIN_BEAM ) || ( k > MAX_BEAM ) )
             throw new IllegalArgumentException("INVALID k VALUE");
+        if ( ( k == 1 ) && ( !initial.equals(goal) ) )
+            throw new IllegalArgumentException("CAN'T SEARCH WITH 1 NODE, CMON");
     }
 
 //---------------------------------------------------------------------------

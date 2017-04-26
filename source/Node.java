@@ -29,6 +29,7 @@ public class Node implements Comparable<Node>
     private double cost;
     private int depth;
     private int childCounter;
+    private boolean visited;
 
     //CONSTANTS
     public static final int DEFAULT = 0;
@@ -43,11 +44,12 @@ public class Node implements Comparable<Node>
         nodeList = new LinkedList<Node>();
         edgeList = new LinkedList<Edge>();
         heuristic = DEFAULT;
-        best = Double.MAX_VALUE;
+        best = 1000000.0;
         fn = DEFAULT;
         cost = DEFAULT;
         depth = DEFAULT;
         childCounter = DEFAULT;
+        visited = false;
     }
 
 //---------------------------------------------------------------------------
@@ -65,6 +67,7 @@ public class Node implements Comparable<Node>
         cost = inNode.getCost();
         depth = inNode.getDepth();
         childCounter = inNode.getChildCount();
+        visited = inNode.isVisited();
     }
 
 //---------------------------------------------------------------------------
@@ -79,6 +82,7 @@ public class Node implements Comparable<Node>
     public double getCost()         { return cost; }
     public int getDepth()           { return depth; }
     public int getChildCount()      { return childCounter; }
+    public boolean isVisited()      { return visited; }
 
 //---------------------------------------------------------------------------
     //SETTERS
@@ -91,6 +95,7 @@ public class Node implements Comparable<Node>
     public void setCost(double inCost)        { cost = inCost; }
     public void setDepth(int inDepth)         { depth = inDepth; }
     public void setCCount(int inCCount)       { childCounter = inCCount; }
+    public void setVisited()                  { visited = true; }
 
 //---------------------------------------------------------------------------
 
@@ -187,7 +192,7 @@ public class Node implements Comparable<Node>
         {
             int value = (int)Math.ceil( n1.getFN() - n2.getFN() );
             if ( value == 0 )
-                value = n1.getDepth() - n2.getDepth();
+                value = n2.getDepth() - n1.getDepth();
             return value;
         }
 	};
@@ -274,6 +279,7 @@ public class Node implements Comparable<Node>
         newNode.setEdges(edgeList);
         newNode.setHeuristic(heuristic);
         newNode.setBest(best);
+        newNode.setFN(fn);
         newNode.setCost(cost);
         newNode.setDepth(depth);
         newNode.setCCount(childCounter);
@@ -295,7 +301,7 @@ public class Node implements Comparable<Node>
         else
             state += "null\n";
         state += "\tBEST: " + best + " COST: " + cost;
-        state += "\n\tFN: " + fn + " DEPTH: " + depth + "\n";
+        state += "\n\tFN: " + fn + " DEPTH: " + depth + " VISIT: " + visited + "\n";
         return state;
     }
 
