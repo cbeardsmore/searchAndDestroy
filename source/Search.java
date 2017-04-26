@@ -112,6 +112,7 @@ public class Search
     {
         List<List<String>> paths = new LinkedList<>();
         LinkedList<Node> frontier = new LinkedList<>();
+        LinkedList<Node> leafNodes = new LinkedList<>();
         boolean done = false;
         int count = 0;
 
@@ -123,7 +124,9 @@ public class Search
         // ADD THE FIRST NODE INTO THE QUEUE + INITIAL SET ITS COST
         Node initNode = graph.getNode(initial);
         initNode.setDepth(1);
+        initNode.setFN( initNode.getHeuristic() );
         frontier.addFirst( initNode );
+        leafNodes.addFirst( initNode );
 
         while ( !done )
         {
@@ -140,6 +143,8 @@ public class Search
                 if ( next != null )
                     System.out.println( next.toString() );
             System.out.println("-------------------------------");
+            printCollection( "LEAF NODES: ", leafNodes );
+            System.out.println("-------------------------------");
 
             Scanner sc = new Scanner(System.in);
             sc.nextInt();
@@ -155,13 +160,25 @@ public class Search
                 return null;
             }
 
-            // IF DEPTH IS TOO LARGE WE ROLL BACK THE CURRENT FRONT, ITS USELESS
+            // IF DEPTH IS TOO LARGE WE ROLL BACK THE CURRENT FRONT LEAF NODE, ITS USELESS
             if ( front.getDepth() >= numNodes )
             {
-                front.setCost( Double.MAX_VALUE );
-                backup(front);
-                frontier.remove(front);
+                Collections.sort( leafNodes, Node.NodeComparatorAStar );
+                Node worst = leafNodes.removeLast();
+                worst.setFN( Double.MAX_VALUE );
+                frontier.remove(worst);
+                backup(worst);
                 continue;
+            }
+
+            // MEMORY IS FULL SO WE ROLLBACK THE WORST COST IN FRONTIER
+            if ( frontier.size() >= numNodes )
+            {
+                Collections.sort( leafNodes, Node.NodeComparatorAStar );
+                Node worst = leafNodes.removeLast();
+                frontier.remove(worst);
+                backup( worst );
+                Node parent = worst.getParent();
             }
 
             // GET THE NEXT POSSIBLE CHILD FROM THE FRONT NODE
@@ -173,21 +190,17 @@ public class Search
             // IF A VALID CHILD EXISTS
             if ( succ != null )
             {
+                leafNodes.remove(front);
+                leafNodes.add(succ);
                 succ.setParent( front );
                 succ.setDepth( front.getDepth() + 1 );
                 double cost = front.getCost() + front.getEdgeCost( succ );
                 succ.setCost( cost );
+                succ.setFN( cost + succ.getHeuristic() );
             }
-
-            // MEMORY IS FULL SO WE ROLLBACK THE WORST COST IN FRONTIER
-            if ( frontier.size() == numNodes )
-            {
-                Collections.sort( frontier, Node.NodeComparatorAStar );
-                Node worst = frontier.removeLast();
-                backup( worst );
-                Node parent = worst.getParent();
-            }
-
+            // NO CHILDREN, RESET THAT SHIT
+            else
+                front.reset();
 
             // INSERT NEXT SUCCESSOR INTO THE FRONTIER
             if ( succ != null )
@@ -205,7 +218,7 @@ public class Search
         // IF NODE IS COMPLETE AND HAS A PARENT
         if ( backupNode.getParent() != null )
         {
-            backupNode.getParent().setBest( backupNode.aCost() );
+            backupNode.getParent().setBest( backupNode.getFN() );
         }
     }
 

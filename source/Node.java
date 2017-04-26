@@ -25,6 +25,7 @@ public class Node implements Comparable<Node>
 
     //CLASSFIELDS SPECIFIC TO SMA*
     private double best;
+    private double fn;
     private double cost;
     private int depth;
     private int childCounter;
@@ -42,7 +43,8 @@ public class Node implements Comparable<Node>
         nodeList = new LinkedList<Node>();
         edgeList = new LinkedList<Edge>();
         heuristic = DEFAULT;
-        best = Integer.MAX_VALUE;
+        best = Double.MAX_VALUE;
+        fn = DEFAULT;
         cost = DEFAULT;
         depth = DEFAULT;
         childCounter = DEFAULT;
@@ -59,6 +61,7 @@ public class Node implements Comparable<Node>
         edgeList = inNode.getEdges();
         heuristic = inNode.getHeuristic();
         best = inNode.getBest();
+        fn = inNode.getFN();
         cost = inNode.getCost();
         depth = inNode.getDepth();
         childCounter = inNode.getChildCount();
@@ -72,6 +75,7 @@ public class Node implements Comparable<Node>
     public List<Edge> getEdges()    { return edgeList; }
     public double getHeuristic()    { return heuristic; }
     public double getBest()         { return best; }
+    public double getFN()           { return fn; }
     public double getCost()         { return cost; }
     public int getDepth()           { return depth; }
     public int getChildCount()      { return childCounter; }
@@ -93,6 +97,11 @@ public class Node implements Comparable<Node>
     public void setBest(double inBest)
     {
         best = Math.min( best, inBest );
+    }
+
+    public void setFN(double inFN)
+    {
+        fn = inFN;
     }
 
 //---------------------------------------------------------------------------
@@ -176,7 +185,7 @@ public class Node implements Comparable<Node>
     {
 	    public int compare(Node n1, Node n2)
         {
-            int value = (int)Math.ceil( n1.aCost() - n2.aCost() );
+            int value = (int)Math.ceil( n1.getFN() - n2.getFN() );
             if ( value == 0 )
                 value = n1.getDepth() - n2.getDepth();
             return value;
@@ -195,6 +204,14 @@ public class Node implements Comparable<Node>
         for ( Node next : nodeList )
             state += next.getName() + " ";
         return state;
+    }
+
+//---------------------------------------------------------------------------
+
+    public void reset()
+    {
+        childCounter = DEFAULT;
+        fn = best;
     }
 
 //---------------------------------------------------------------------------
@@ -245,13 +262,6 @@ public class Node implements Comparable<Node>
     }
 
 //---------------------------------------------------------------------------
-
-    public double aCost()
-    {
-        return cost + heuristic;
-    }
-
-//---------------------------------------------------------------------------
     //NAME: clone()
     //EXPORT: newNode (Object)
 
@@ -285,7 +295,7 @@ public class Node implements Comparable<Node>
         else
             state += "null\n";
         state += "\tBEST: " + best + " COST: " + cost;
-        state += " DEPTH: " + depth + "\n";
+        state += "\n\tFN: " + fn + " DEPTH: " + depth + "\n";
         return state;
     }
 
