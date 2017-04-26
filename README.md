@@ -1,16 +1,14 @@
 # searchAndDestroy
 
--
-#####Artificial and Machine Intelligence 300: Search Techniques
--
+##### Artificial and Machine Intelligence 300: Search Techniques
 
-#####Purpose
+##### Purpose
 
 Implementation of both Beam Informed search and Memory Bounded A* search
 
-#####How to Run
+##### How to Run
 
-######Beam Search
+###### Beam Search
 
 Run the script named with the following parameters:
 
@@ -19,7 +17,7 @@ beam-search <initial node> <goal node> <graph file> <k>
 ```
 
 
-######Memory Limited A* Search
+###### Simplified Memory Limited A* Search
 
 Run the script named with the following parameters:
 
