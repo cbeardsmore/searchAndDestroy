@@ -44,7 +44,7 @@ public class Node implements Comparable<Node>
         nodeList = new LinkedList<Node>();
         edgeList = new LinkedList<Edge>();
         heuristic = DEFAULT;
-        best = Double.MAX_VALUE;
+        best = Double.POSITIVE_INFINITY;
         fn = DEFAULT;
         cost = DEFAULT;
         depth = DEFAULT;
@@ -96,22 +96,21 @@ public class Node implements Comparable<Node>
     public void setDepth(int inDepth)         { depth = inDepth; }
     public void setCCount(int inCCount)       { childCounter = inCCount; }
     public void setVisited()                  { visited = true; }
+    public void setFN(double inFN)            { fn = inFN; }
 
 //---------------------------------------------------------------------------
 
-    public void setBest(double inBest)
+    public void setBestChild()
     {
-        if ( inBest == Double.POSITIVE_INFINITY )
-            best = inBest;
-        if ( inBest == Double.MAX_VALUE )
-            best = inBest;
-        else
-            best = Math.min( best, inBest );
+        this.best = Double.POSITIVE_INFINITY;
+        for ( Node next : nodeList )
+            if ( next.getFN() < this.best  )
+                this.best = next.getFN();
     }
 
-    public void setFN(double inFN)
+    public void setBest( double inBest )
     {
-        fn = inFN;
+        best = Math.min( best, inBest );
     }
 
 //---------------------------------------------------------------------------
@@ -222,6 +221,7 @@ public class Node implements Comparable<Node>
     {
         System.out.println("RESETTING NODE: " + this.name );
         childCounter = DEFAULT;
+        setBestChild();
         fn = best;
     }
 

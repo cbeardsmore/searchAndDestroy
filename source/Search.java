@@ -181,7 +181,7 @@ public class Search
             {
                 if ( frontier.contains( succ ) )
                     if ( succ.getParent() != null )
-                        succ.getParent().setBest( succ.getFN() );
+                        succ.getParent().setBestChild();
                 succ = front.getNextChild();
             }
 
@@ -204,14 +204,13 @@ public class Search
                     leafNodes.remove(succ);
                     backup(succ, frontier);
                     isParentLeaf( front, leafNodes );
-                    continue;
                 }
                 // IF VALID, ADD TO THE FRONTIER
                 else
                     frontier.addLast(succ);
             }
             // NO CHILDREN, RESET ITERATOR AND UPDATE f(n) = BEST
-            else
+            if ( !front.hasNextChild() )
                 front.reset();
         }
 
@@ -225,7 +224,7 @@ public class Search
         System.out.println("BACKUP NODE: " + backupNode.getName() );
         // BACK UP ITS fn COST TO ITS PARENTS BEST COST
         if ( backupNode.getParent() != null )
-            backupNode.getParent().setBest( backupNode.getFN() );
+            backupNode.getParent().setBestChild();
         // REMOVE IT FROM THE FRONTIER
         frontier.remove( backupNode );
     }
@@ -240,7 +239,7 @@ public class Search
         succ.setCost( cost );
         if ( !succ.isVisited() )
             succ.setFN( cost + succ.getHeuristic() );
-        parent.setBest( succ.getFN() );
+        parent.setBestChild();
     }
 
 //---------------------------------------------------------------------------
