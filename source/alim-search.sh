@@ -1,10 +1,10 @@
 #/bin/bash
 
-init=A
-goal=G
-gfile=./graphs/graphF1.txt
-hfile=./graphs/heuristicF1.txt
-memory=3
+init=1
+goal=15
+gfile=./graphs/g1.al
+hfile=./graphs/g1.heu
+memory=8
 museum=y
 
 java AlimSearch $init $goal $gfile $hfile $memory $museum

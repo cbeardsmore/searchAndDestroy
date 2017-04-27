@@ -36,7 +36,7 @@ public class Edge
 
     public Node getSource()        { return source; }
     public Node getSink()          { return sink; }
-    public double getWeight()         { return weight; }
+    public double getWeight()      { return weight; }
 
 //---------------------------------------------------------------------------
     //SETTERS

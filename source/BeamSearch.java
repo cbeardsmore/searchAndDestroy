@@ -21,7 +21,7 @@ public class BeamSearch
 
     public static void main( String[] args )
     {
-        // CHECK COMMAND LINE PARAMTER LENGTH
+        //check command line parameters
         if ( args.length != ARG_NUM )
         {
             System.err.print("\nUSAGE: java BeamSearch <initial> <goal> <graphfile>");
@@ -29,7 +29,7 @@ public class BeamSearch
             System.exit(1);
         }
 
-        // RENAME ARGS FOR SIMPLICITY
+        //rename args for simplicity
         List<List<String>> paths = new LinkedList<>();
         String initial = args[0];
         String goal = args[1];
@@ -39,27 +39,31 @@ public class BeamSearch
         boolean flag = false;
         int k = 0;
 
-        // PARSE k + museum TO ENSURE VALIDITY
+        //parse k and museum to ensure validity
         try
         {
             k = Integer.parseInt( args[4] );
             if ( museum.equals(YES) )
                 flag = true;
             else if ( !museum.equals(NO) )
-                throw new NumberFormatException("INVALID MUSEUM FLAG");
+                throw new IllegalArgumentException("INVALID MUSEUM FLAG");
         }
         catch ( NumberFormatException e )
         {
-            System.err.println("INVALID COMMAND LINE ARGUMENTS:");
-            System.err.println( e.getMessage() );
+            System.err.println("INVALID BEAM VALUE: " + e.getMessage() );
+            System.exit(1);
+        }
+        catch ( IllegalArgumentException e )
+        {
+            System.err.println("INVALID MUSEUM FLAG: " + e.getMessage() );
             System.exit(1);
         }
 
-        // CREATE OBJECT STRUCTURES
+        //create object structures
         Graph graph = new Graph();
         FileIO fileReader = new FileIO( graph );
 
-        // READ IN GRAPH + HEURISTIC FILES
+        //read in graph and heuristic files
         try
         {
             fileReader.readFiles( gFile, hFile );
@@ -71,7 +75,7 @@ public class BeamSearch
             System.exit(1);
         }
 
-        // PERFROM THE ACTUAL BEAM SEARCH, CHECKING FOR ERRORS
+        //perform the actual Beam search, catching all possible errors
         try
         {
             printSummary( graph, initial, goal, k );
@@ -84,11 +88,14 @@ public class BeamSearch
             System.exit(1);
         }
 
-        // DO STUFF WITH THE FINAL PATHS
+        //print all final paths given
         Search.printPaths( paths, goal );
     }
 
 //---------------------------------------------------------------------------
+    //NAME: printSummary()
+    //IMPORT: graph (Graph), initial (String), goal (String), k (int)
+    //PURPOSE: Print search summary block
 
     public static void printSummary( Graph graph, String initial, String goal, int k )
     {

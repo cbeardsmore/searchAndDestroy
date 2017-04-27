@@ -36,17 +36,17 @@ public class FileIO
 
     public void readFiles( String gFilename, String hFilename )
     {
-        // OPEN FILES
+        //open files
         File gFile = new File( gFilename );
         File hFile = new File( hFilename );
 
         try
         {
-            // PARSE EACH LINE OF THE GRAPH FILE
+            //parse each line of the GRAPH file
             Scanner gScan = new Scanner( gFile );
             while ( gScan.hasNextLine() )
                 parseLine( gScan.nextLine() );
-            // PARSE EACH LINE OF THE HEURISTIC FILE
+            //parse each line of the HEURISTIC file
             Scanner fScan = new Scanner( hFile );
             while ( fScan.hasNextLine() )
                 parseHeuristic( fScan.nextLine() );
@@ -66,24 +66,24 @@ public class FileIO
     {
         String[] tokens = line.split(" ");
 
-        // IGNORE EMPTY LINES
+        //ignore empty lines
         if ( line.equals("") )
             return;
 
-        // FORMAT MUST BE 2 NODE NAMES FOLLOWED BY A VALUE
+        //format must be two node names followed by a weight
         if ( tokens.length != GRAPH_FIELDS )
             throw new IllegalArgumentException("GRAPH FILE FORMAT INVALID");
 
-        // SIMPLIFY NAMING
+        //simplify naming
         String source = tokens[0];
         String sink = tokens[1];
         int weight = Integer.parseInt( tokens[2] );
 
-        // GET REFERENCES TO THE NODES
+        //grab references to the nodes involved
         Node sourceNode = graph.getNode(source);
         Node sinkNode = graph.getNode(sink);
 
-        // ADD EDGES TO THE GRAPH IF THEY DON'T ALREADY EXIST
+        //add nodes to the graph if they haven't been seen before
         if ( sourceNode == null )
         {
             sourceNode = new Node( source );
@@ -95,7 +95,6 @@ public class FileIO
             graph.addNode( sinkNode );
         }
 
-        // ADD THE NEW EDGE INTO THE GRAPH
         Edge edge = new Edge( sourceNode, sinkNode, weight );
         graph.addEdge( edge );
     }
@@ -109,14 +108,14 @@ public class FileIO
     {
         String[] tokens = line.split(" ");
 
-        // IGNORE EMPTY LINES
+        //ignore empty lines
         if ( line.equals("") )
             return;
 
         if ( tokens.length != HEURISTIC_FIELDS )
             throw new IllegalArgumentException("HEURISTIC FILE FORMAT INVALID");
 
-        // SIMPLIFY NAMING
+        //simplify naming
         String nodeName = tokens[0];
         double weight = Double.parseDouble( tokens[1] );
 

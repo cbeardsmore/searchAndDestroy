@@ -254,10 +254,13 @@ public class Search
     }
 
 //---------------------------------------------------------------------------
+    //NAME: isParentLeaf()
+    //IMPORT: parent (Node), leafNodes (LinkedList<Node>)
+    //PURPOSE:
 
     private static void isParentLeaf( Node parent, LinkedList<Node> leafNodes )
     {
-        // IF THERE ARE NO KID LEAFS, THE PARENT IS NOW A LEAF
+        //if there are none of my children in leafNodes, i am now a leaf
         for ( Node next : leafNodes )
             if ( next.getParent() == parent )
                 return;
@@ -265,6 +268,9 @@ public class Search
     }
 
 //---------------------------------------------------------------------------
+    //NAME: printSMAStar()
+    //IMPORT: frontier (LinkedList<Node>), leafNodes (LinkedList<Node>)
+    //PURPOSE: Print out the current contents of both the frontier and leafNodes
 
     private static void printSMAStar( LinkedList<Node> frontier, LinkedList<Node> leafNodes )
     {
@@ -279,6 +285,9 @@ public class Search
     }
 
 //---------------------------------------------------------------------------
+    //NAME: printCollection()
+    //IMPORT: label (String), collect (Collection<Node>)
+    //PURPOSE: Print a collection of nodes prefixed by the given label
 
     private static void printCollection( String label, Collection<Node> collect )
     {
@@ -300,10 +309,10 @@ public class Search
         Node next = goal;
         List<String> path = new LinkedList<>();
 
-        // LOOP UNTIL THE INITIAL NODE IS REACHED
+        //loop until initial goal found
         while ( next != null )
         {
-            // ADD TO THE PATH, MOVE TO THE NEXT PARENT
+            //add to the path and go to the next parent
             path.add( 0, next.getName() );
             next = next.getParent();
         }
@@ -321,12 +330,10 @@ public class Search
         for ( List<String> nextPath : paths )
         {
             if ( nextPath.contains(goal) )
-            {
-                System.out.println("\n-------------------------------");
-                System.out.print("SOLUTION PATH: ");
-            }
+                System.out.print("\n-------------------------------\nSOLUTION PATH: ");
             else
                 System.out.print("\nPARTIAL PATH:  ");
+
             for ( String next : nextPath )
                 System.out.print( next + " " );
         }

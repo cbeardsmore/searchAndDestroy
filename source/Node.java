@@ -24,10 +24,10 @@ public class Node implements Comparable<Node>
     protected List<Edge> edgeList;
 
     //CLASSFIELDS SPECIFIC TO SMA*
-    private double best;
-    private double fn;
-    private double cost;
-    private int depth;
+    private double best;       //the best of this nodes childrens f(n) costs
+    private double fn;         //the A* cost, where f(n) = g(n) + h(n)
+    private double cost;       //the accumulated path cost to this node
+    private int depth;         //depth in the search tree from the initial node
     private int childCounter;
     private boolean visited;
 
@@ -35,7 +35,7 @@ public class Node implements Comparable<Node>
     public static final int DEFAULT = 0;
 
 //---------------------------------------------------------------------------
-    //ALTERNATE CONSTRUCTOR
+    //DEFAULT CONSTRUCTOR
 
     public Node( String inName )
     {
@@ -53,7 +53,7 @@ public class Node implements Comparable<Node>
     }
 
 //---------------------------------------------------------------------------
-    //ALTERNATE CONSTRUCTOR
+    //COPY CONSTRUCTOR
 
     public Node( Node inNode )
     {
@@ -71,7 +71,40 @@ public class Node implements Comparable<Node>
     }
 
 //---------------------------------------------------------------------------
-    //GETTERS
+    //NAME: addNode()
+    //IMPORT: inNode(node)
+    //PURPOSE: Add new node into the current node list
+
+    public void addNode(Node inNode)
+    {
+        nodeList.add( inNode );
+        Collections.sort(nodeList);
+    }
+
+//---------------------------------------------------------------------------
+    //NAME: addEdge()
+    //IMPORT: inEdge (Edge)
+    //PURPOSE: Add edge into the current edge list and fix dependencies
+
+    public void addEdge(Edge inEdge)
+    {
+        //get references for connected nodes
+        Node source = inEdge.getSource();
+        Node sink = inEdge.getSink();
+
+        //add connectred node dependencies
+        if ( sink.getName().equals(name) )
+            nodeList.add( source );
+        else if ( source.getName().equals(name) )
+            nodeList.add( sink );
+        else
+            throw new IllegalArgumentException("EDGE INVALID FOR NODE");
+
+        edgeList.add(inEdge);
+    }
+
+//---------------------------------------------------------------------------
+    //BASIC GETTERS
 
     public String getName()         { return name; }
     public Node getParent()         { return parent; }
@@ -85,7 +118,18 @@ public class Node implements Comparable<Node>
     public boolean isVisited()      { return visited; }
 
 //---------------------------------------------------------------------------
-    //SETTERS
+    //NAME: getNodes()
+    //EXPORT: nodeList (List<Node>)
+    //PURPOSE: Retreive a list of nodes in sorted order alphabetically
+
+    public List<Node> getNodes()
+    {
+        Collections.sort( nodeList );
+        return nodeList;
+    }
+
+//---------------------------------------------------------------------------
+    //BASIC SETTERS
 
     public void setName(String inName)        { name = inName; }
     public void setParent(Node inPar)         { parent = inPar; }
@@ -97,8 +141,11 @@ public class Node implements Comparable<Node>
     public void setCCount(int inCCount)       { childCounter = inCCount; }
     public void setVisited()                  { visited = true; }
     public void setFN(double inFN)            { fn = inFN; }
+    public void setBest(double inBest)        { best = inBest; }
 
 //---------------------------------------------------------------------------
+    //NAME: setBestChild()
+    //PURPOSE: Find the best f(n) cost of all my children
 
     public void setBestChild()
     {
@@ -109,69 +156,11 @@ public class Node implements Comparable<Node>
                     this.best = next.getFN();
     }
 
-    public void setBest( double inBest )
-    {
-        best = Math.min( best, inBest );
-    }
-
-//---------------------------------------------------------------------------
-    //NAME: getNodes()
-    //EXPORT: nodeList (List<Node>)
-    //PURPOSE: Retreive a list of nodes in sorted order based on heuristic
-
-    public List<Node> getNodes()
-    {
-        Collections.sort( nodeList );
-        return nodeList;
-    }
-
-//---------------------------------------------------------------------------
-    //NAME: addNode()
-    //IMPORT: inNode(node)
-    //PURPOSE: Add new node into the current node list
-
-    public void addNode(Node inNode)
-    {
-        nodeList.add( inNode );
-        Collections.sort(nodeList);
-    }
-
-//---------------------------------------------------------------------------
-
-    public void removeNode(Node inNode)
-    {
-        nodeList.remove( inNode );
-        Collections.sort(nodeList);
-    }
-
-//---------------------------------------------------------------------------
-    //NAME: addEdge()
-    //IMPORT: inEdge (Edge)
-    //PURPOSE: Add edge into the current edge list and fix dependencies
-
-    public void addEdge(Edge inEdge)
-    {
-        // GET REFERENCES FOR CONNECTED NODES
-        Node source = inEdge.getSource();
-        Node sink = inEdge.getSink();
-
-        // ADD THE CONNECTED NODE DEPENDENCIES
-        if ( sink.getName().equals(name) )
-            nodeList.add( source );
-        else if ( source.getName().equals(name) )
-            nodeList.add( sink );
-        else
-            throw new IllegalArgumentException("EDGE INVALID FOR NODE");
-
-        // ADD EDGE INTO THE EDGE LIST
-        edgeList.add(inEdge);
-    }
-
 //---------------------------------------------------------------------------
     //NAME: compareTo()
     //IMPORT: inNode (Node)
     //EXPORT: comparison (int)
-    //PURPOSE: Compares the two nodes based on the heurstic value, lowest first
+    //PURPOSE: Compares the two nodes based alphabetically
 
     @Override
     public int compareTo(Node inNode)
@@ -180,6 +169,8 @@ public class Node implements Comparable<Node>
     }
 
 //---------------------------------------------------------------------------
+    //CUSTOM Comparator
+    //used in beam search to compare nodes based on HEURISTIC values
 
     public static Comparator<Node> NodeComparatorBeam = new Comparator<Node>()
     {
@@ -190,6 +181,8 @@ public class Node implements Comparable<Node>
 	};
 
 //---------------------------------------------------------------------------
+    //CUSTOM Comparator
+    //used in SMA* search to compare nodes based on f(n) first, depth second
 
     public static Comparator<Node> NodeComparatorAStar = new Comparator<Node>()
     {
@@ -204,30 +197,22 @@ public class Node implements Comparable<Node>
 	};
 
 //---------------------------------------------------------------------------
-    //NAME: connectedTo()
-    //EXPORT: connected (String)
-    //PURPOSE: Return list of all connected node names
-
-    public String connectedTo()
-    {
-        String state = "";
-        Collections.sort( nodeList );
-        for ( Node next : nodeList )
-            state += next.getName() + " ";
-        return state;
-    }
-
-//---------------------------------------------------------------------------
+    //NAME: reset()
+    //PURPOSE: reset a nodes child counters once all child have been seen
 
     public void reset()
     {
         System.out.println("RESETTING NODE: " + this.name );
         childCounter = DEFAULT;
         setBestChild();
+        //the nodes f(n) cost now becomes the best of all it's children
         this.fn = this.best;
     }
 
 //---------------------------------------------------------------------------
+    //NAME: hasNextChild()
+    //EXPORT: hasChild (boolean)
+    //PURPOSE: Returns true if this node has more children to explore
 
     public boolean hasNextChild()
     {
@@ -238,6 +223,9 @@ public class Node implements Comparable<Node>
     }
 
 //---------------------------------------------------------------------------
+    //NAME: getNextChild()
+    //EXPORT: next (Node)
+    //PURPOSE: Export the nodes next children to visit, if one exists
 
     public Node getNextChild()
     {
@@ -264,19 +252,24 @@ public class Node implements Comparable<Node>
     }
 
 //---------------------------------------------------------------------------
+    //NAME: getEdgeCost()
+    //IMPORT: eNode (Node)
+    //EXPORT weight (double)
+    //PURPOSE: Given a node, return the cost of the edge weight to that node
 
     public double getEdgeCost( Node eNode )
     {
         for ( Edge next : edgeList )
             if ( ( next.getSource() == eNode ) || ( next.getSink() == eNode ) )
                 return next.getWeight();
-
-        return 0.0;
+        //indicates that no edge was found
+        return -1.0;
     }
 
 //---------------------------------------------------------------------------
     //NAME: clone()
     //EXPORT: newNode (Object)
+    //PURPOSE: Clone a node object and all state when it needs copying
 
     @Override
     public Object clone()
@@ -309,6 +302,20 @@ public class Node implements Comparable<Node>
         state += ")\n\tDEPTH: " + depth + " VISIT: " + visited;
         state += " H:" + heuristic + " COST: " + cost;
         state += "\n\tFN: " + fn + " BEST: " + best;
+        return state;
+    }
+
+//---------------------------------------------------------------------------
+    //NAME: connectedTo()
+    //EXPORT: connected (String)
+    //PURPOSE: Return list of all connected node names
+
+    public String connectedTo()
+    {
+        String state = "";
+        Collections.sort( nodeList );
+        for ( Node next : nodeList )
+            state += next.getName() + " ";
         return state;
     }
 
