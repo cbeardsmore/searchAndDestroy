@@ -105,7 +105,8 @@ public class Node implements Comparable<Node>
         this.best = Double.POSITIVE_INFINITY;
         for ( Node next : nodeList )
             if ( next.getFN() < this.best  )
-                this.best = next.getFN();
+                if ( next.parent == this )
+                    this.best = next.getFN();
     }
 
     public void setBest( double inBest )
@@ -194,7 +195,8 @@ public class Node implements Comparable<Node>
     {
 	    public int compare(Node n1, Node n2)
         {
-            int value = (int)Math.ceil( n1.getFN() - n2.getFN() );
+            Double n1Double = n1.getFN();
+            int value = n1Double.compareTo( n2.getFN() );
             if ( value == 0 )
                 value = n2.getDepth() - n1.getDepth();
             return value;
@@ -222,7 +224,7 @@ public class Node implements Comparable<Node>
         System.out.println("RESETTING NODE: " + this.name );
         childCounter = DEFAULT;
         setBestChild();
-        fn = best;
+        this.fn = this.best;
     }
 
 //---------------------------------------------------------------------------

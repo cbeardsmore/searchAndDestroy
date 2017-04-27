@@ -134,23 +134,25 @@ public class Search
 
         while ( !done )
         {
+            count++;
+
             // IF THE QUEUE IS EMPTY, NO SOLUTION IS POSSIBLE
             if ( frontier.isEmpty() )
             {
                 System.out.println("FAILURE: NO SOLUTION, ALL PATHS EXPLORED");
+                System.out.println( "\tITERATIONS: " + count );
                 return null;
             }
             // IF THE ROOT NODE IS INIFINITY, NO PATHS EXIST
             if ( initNode.getFN() == ( Double.POSITIVE_INFINITY ) )
             {
                 System.out.println("FAILURE: NO SOLUTION, ROOT IS INFINITY");
+                System.out.println( "\tITERATIONS: " + count );
                 return null;
             }
 
             // PRINT FRONTIER + LEAF NODES LISTS
             printSMAStar( frontier, leafNodes );
-            Scanner sc = new Scanner(System.in);
-            sc.nextInt();
 
             // GET THE BEST NODE - LOWEST f-COST AND HIGHEST DEPTH
             Collections.sort( frontier, Node.NodeComparatorAStar );
@@ -204,6 +206,14 @@ public class Search
                     leafNodes.remove(succ);
                     backup(succ, frontier);
                     isParentLeaf( front, leafNodes );
+
+                    if ( succ == goalNode )
+                    {
+                        System.out.println("SUCCESS: SOLUTION FOUND");
+                        System.out.println( "\tITERATIONS: " + count );
+                        paths.add( createPath( goalNode ) );
+                        break;
+                    }
                 }
                 // IF VALID, ADD TO THE FRONTIER
                 else
@@ -214,6 +224,7 @@ public class Search
                 front.reset();
         }
 
+        System.out.println( "\tITERATIONS: " + count );
         return paths;
     }
 

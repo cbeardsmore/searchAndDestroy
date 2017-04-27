@@ -78,8 +78,8 @@ public class AlimSearch
 
         // DO STUFF WITH THE FINAL PATHS
         printSummary( graph, initial, goal, numNodes );
-        //Search.printPaths( paths, goal );
-
+        if ( paths != null )
+            Search.printPaths( paths, goal );
     }
 
 //---------------------------------------------------------------------------
