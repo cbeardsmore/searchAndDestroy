@@ -1,10 +1,10 @@
 #/bin/bash
 
 init=1
-goal=21
-gfile=./graphs/g1.al
-hfile=./graphs/g1.heu
-beam=2
-museum=y
+goal=50
+gfile=./graphs/gg_100x100.al
+hfile=./graphs/gg_100x100.heu
+beam=10
+museum=n
 
 java BeamSearch $init $goal $gfile $hfile $beam $museum

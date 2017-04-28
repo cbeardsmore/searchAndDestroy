@@ -77,7 +77,7 @@ public class FileIO
         //simplify naming
         String source = tokens[0];
         String sink = tokens[1];
-        int weight = Integer.parseInt( tokens[2] );
+        double weight = Double.parseDouble( tokens[2] );
 
         //grab references to the nodes involved
         Node sourceNode = graph.getNode(source);

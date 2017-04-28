@@ -19,7 +19,7 @@ public class Edge
 //---------------------------------------------------------------------------
     //ALTERNATE CONSTRUCTOR
 
-    public Edge( Node inSource, Node inSink, int inWeight )
+    public Edge( Node inSource, Node inSink, double inWeight )
     {
         if ( ( inSource == null ) || ( inSink == null ) )
             throw new IllegalArgumentException("NULL NODE IN EDGE");

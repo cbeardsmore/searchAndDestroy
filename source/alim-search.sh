@@ -1,10 +1,10 @@
 #/bin/bash
 
 init=1
-goal=15
-gfile=./graphs/g1.al
-hfile=./graphs/g1.heu
-memory=8
-museum=y
+goal=500
+gfile=./graphs/gg_1000x1000.al
+hfile=./graphs/gg_1000x1000.heu
+memory=15
+museum=n
 
 java AlimSearch $init $goal $gfile $hfile $memory $museum
