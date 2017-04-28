@@ -152,7 +152,7 @@ public class Search
             }
 
             // PRINT FRONTIER + LEAF NODES LISTS
-            printSMAStar( frontier, leafNodes );
+            //printSMAStar( frontier, leafNodes );
 
             // GET THE BEST NODE - LOWEST f-COST AND HIGHEST DEPTH
             Collections.sort( frontier, Node.NodeComparatorAStar );
@@ -262,8 +262,10 @@ public class Search
     {
         //if there are none of my children in leafNodes, i am now a leaf
         for ( Node next : leafNodes )
-            if ( next.getParent() == parent )
+            //if ( next.getParent() == parent )
+            if ( next.inPath( parent ) )
                 return;
+
         leafNodes.add(parent);
     }
 
