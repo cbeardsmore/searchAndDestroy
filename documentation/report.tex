@@ -14,6 +14,7 @@
 \usepackage{hyperref}
 \usepackage{transparent}
 \usepackage{pdfpages}
+\usepackage[style=chicago-authordate,backend=biber]{biblatex}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -24,6 +25,9 @@
 
 \pagenumbering{arabic}
 \graphicspath{{./images/}}
+
+\addbibresource{bib/references.bib}
+\nocite{*}
 
 %-------------------------------------------------------------------------------
 \begin{document}
@@ -38,9 +42,9 @@
 \begin{titlepage}
 	\begin{center}
 		\vspace*{1cm}
-		\LARGE\textbf{AMI300 Report}
+		\LARGE\textbf{AMI300 Report} \vspace{0.5cm}
 		\break
-		Implementation of Search Techniques
+	    Informed Beam and SMA* Search Implementations
 		\vspace{1cm}
 		\break
 		\Large\textbf{Connor Beardsmore - 15504319} 
@@ -60,7 +64,7 @@
 
 \vspace*{-0.8cm}
 \begin{center}
-	\section*{Beam Search}
+	\section*{Informed Beam Search}
 \end{center}
 
 \vspace*{0.8cm}
@@ -76,7 +80,7 @@ dsdsaddas
 \pagebreak
 
 \begin{center}
-	\section*{Memory Limited A* Search}
+	\section*{Simplified Memory Limited A* Search}
 \end{center}
 
 \vspace*{0.8cm}
@@ -88,6 +92,13 @@ sdsdsdsd
 \subsection*{Problems and Bugs}
 
 sdsdsdsad
+
+%-------------------------------------------------------------------------------   
+% REFERENCES
+
+\break
+\setlength\bibitemsep{4\itemsep}
+\printbibliography[title={References}]
 
 %-------------------------------------------------------------------------------
 \end{document}   

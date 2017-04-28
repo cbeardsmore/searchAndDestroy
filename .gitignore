@@ -17,3 +17,9 @@ hs_err_pid*
 *.log
 *.gz
 *.aux
+
+# BiB
+*.bbl
+*.bcf
+*.blg
+*.run.xml
