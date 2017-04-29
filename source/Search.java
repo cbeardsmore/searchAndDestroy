@@ -30,6 +30,7 @@ public class Search
         List<List<String>> paths = new LinkedList<>();
         Queue<Node> frontier = new PriorityQueue<>( 11, Node.NodeComparatorBeam);
         Queue<Node> beam = new PriorityQueue<>();
+        Queue<Node> beamCopy;
         boolean done = false;
 
         //ensure all fields are valid before continuing
@@ -46,7 +47,8 @@ public class Search
         while ( !done )
         {
             printCollection( "BEAM", beam );
-
+            //used to help do partial paths in memory
+            beamCopy = new PriorityQueue<>( beam );
             //loop while beam still has nodes within it
             while ( !beam.isEmpty() )
             {
@@ -55,12 +57,16 @@ public class Search
                 //add all children for consideration, set parent field
                 for ( Node child : nextNode.getNodes() )
                 {
+                    double cost = nextNode.getCost() + nextNode.getEdgeCost( child );
+                    child.setCost( cost );
+
                     //goal test
                     if ( goal.equals( child.getName() ) )
                     {
                         child.setParent( nextNode );
+                        //goal path + all paths currently in memory
                         paths.add( createPath( child ) );
-                        for ( Node nextBeam : beam )
+                        for ( Node nextBeam : beamCopy )
                             paths.add( createPath( nextBeam ) );
                         //if no mueseum we can stop now, if not we continue
                         if ( !museum )
@@ -318,6 +324,7 @@ public class Search
         Node next = goal;
         List<String> path = new LinkedList<>();
 
+        path.add( 0, "COST=" + goal.getCost() );
         //loop until initial goal found
         while ( next != null )
         {
@@ -364,8 +371,6 @@ public class Search
             throw new IllegalArgumentException("GOAL NODE DOESN'T EXIST");
         if ( ( k < MIN_BEAM ) || ( k > MAX_BEAM ) )
             throw new IllegalArgumentException("INVALID k VALUE");
-        if ( ( k == 1 ) && ( !initial.equals(goal) ) )
-            throw new IllegalArgumentException("CAN'T SEARCH WITH 1 NODE, CMON");
     }
 
 //---------------------------------------------------------------------------
