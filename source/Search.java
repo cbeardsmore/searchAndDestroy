@@ -168,11 +168,7 @@ public class Search
             //goal test
             if ( front == goalNode )
             {
-                System.out.println("SUCCESS: SOLUTION FOUND");
-                leafNodes.remove( front );
-                paths.add( createPath( goalNode ) );
-                for ( Node next : leafNodes )
-                    paths.add( createPath( next ) );
+                goalReached( front, leafNodes, paths );
                 break;
             }
 
@@ -219,12 +215,7 @@ public class Search
                     //another goal test here before we explore from the frontier
                     if ( succ == goalNode )
                     {
-                        System.out.println("SUCCESS: SOLUTION FOUND (MAX DEPTH)");
-                        System.out.println( "\tITERATIONS: " + count );
-                        paths.add( createPath( goalNode ) );
-                        //print partial paths when solution found
-                        for ( Node next : leafNodes )
-                            paths.add( createPath( next ) );
+                        goalReached( succ, leafNodes, paths );
                         break;
                     }
                 }
@@ -239,6 +230,21 @@ public class Search
 
         System.out.println( "\tITERATIONS: " + count );
         return paths;
+    }
+
+//---------------------------------------------------------------------------
+    //NAME: goalReached()
+    //IMPORT: goalNode (Node), leafNodes (LinkedList<Node>), paths (List<List<String>>)
+    //PURPOSE: Set up paths upon reaching the goal and restore state
+
+    public static void goalReached( Node goalNode, LinkedList<Node> leafNodes,
+                                                   List<List<String>> paths)
+    {
+        System.out.println("SUCCESS: SOLUTION FOUND");
+        leafNodes.remove( goalNode );
+        paths.add( createPath( goalNode ) );
+        for ( Node next : leafNodes )
+            paths.add( createPath( next ) );
     }
 
 //---------------------------------------------------------------------------
