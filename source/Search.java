@@ -4,19 +4,19 @@
 *	UNIT: AMI300
 *	PURPOSE: Implementations of various search algorithms
 *   LAST MOD: 13/04/07
-*   REQUIRES: List, LinkedList, Stack
+*   REQUIRES: java.util
 ***************************************************************************/
 
 import java.util.*;
 
 public class Search
 {
+    //CONSTANTS
     public static final int MIN_BEAM = 0;
     public static final int MAX_BEAM = 10000;
     public static final int INITIAL_DEPTH = 1;
     public static final int GOAL_HEURISTIC = 0;
     public static final int INIT_HEURISTIC = Integer.MAX_VALUE;
-    public static final int MAX_BEST = 100000;
 
 //---------------------------------------------------------------------------
     //NAME: beamSearch()
@@ -32,45 +32,44 @@ public class Search
         Queue<Node> beam = new PriorityQueue<>();
         boolean done = false;
 
-        // ENSURE ALL FIELDS ARE VALID BEFORE CONTINUING
+        //ensure all fields are valid before continuing
         validateFields( graph, initial, goal, k );
 
-        // SET THE HEURISTIC OF THE GOAL AND INITIAL NODES
+        //only need these lines if the heuristic file is missing information
         graph.getNode(initial).setHeuristic( INIT_HEURISTIC );
         graph.getNode(goal).setHeuristic( GOAL_HEURISTIC );
 
-        // ADD THE INITIAL NODE TO THE QUEUE
+        //add initial node to the beam
         beam.add( graph.getNode(initial) );
 
-        // LOOP UNTIL GOAL FOUND OR THE BEAM BECOMES EMPTY
+        //loop until goal is found or beam is empty
         while ( !done )
         {
-            // PRINT THE BEAM
             printCollection( "BEAM", beam );
 
-            //LOOP WHILE THE BEAM STILL HAS NODES WITHIN IT
+            //loop while beam still has nodes within it
             while ( !beam.isEmpty() )
             {
-                // GET THE NEXT ITEM IN THE BEAM AND ADD TO EXPLORED
                 Node nextNode = beam.remove();
 
-                // ADD ALL OF ITS CHILDREN FOR CONSIDERATION, SET PARENT FIELD
+                //add all children for consideration, set parent field
                 for ( Node child : nextNode.getNodes() )
                 {
-                    //GOAL TEST
+                    //goal test
                     if ( goal.equals( child.getName() ) )
                     {
                         child.setParent( nextNode );
                         paths.add( createPath( child ) );
                         for ( Node nextBeam : beam )
                             paths.add( createPath( nextBeam ) );
+                        //if no mueseum we can stop now, if not we continue
                         if ( !museum )
                             return paths;
                     }
-                    // ONLY CONSIDER IF THE NODES ISN'T IN THE FRONTIER OR BEAM
+                    //not a goal node, add a copy into the frontier
                     else
                     {
-                        // MAKE SURE THE CHILD ISN'T IN THE SAME PATH
+                        //check we are not looping
                         if ( !nextNode.inPath( child ) )
                         {
                             child.setParent( nextNode );
@@ -80,24 +79,24 @@ public class Search
                 }
             }
 
-            // PRINT THE FRONTIER
             printCollection( "FRONTIER", frontier );
 
-            // ADD THE k NEXT ITEMS INTO THE BEAM
+            //add the best k items into the new beam
             int curr = 0;
             while ( ( !frontier.isEmpty() ) && ( curr < k ) )
             {
                 Node nextNode = frontier.remove();
                 curr++;
 
-                // ADD THE NODE INTO THE BEAM, IF IT'S NOT ALREADY THERE
+                //only add if its not already in the beam
                 if ( !beam.contains( nextNode ) )
                     beam.add( (Node)nextNode.clone() );
             }
 
+            //throw away any other elements, they are outside of the beam now
             frontier.clear();
 
-            // IF THE BEAM IS EMPTY, WE MUST BE DONE
+            //if the beam is empty, no more solutions are possible
             if ( beam.isEmpty() )
                 done = true;
         }
@@ -119,14 +118,15 @@ public class Search
         boolean done = false;
         int count = 0;
 
-        // ENSURE ALL FIELDS ARE VALID BEFORE CONTINUING
+        //ensure all fields are valid
         validateFields( graph, initial, goal, numNodes );
-        // SET THE HEURISTIC OF THE GOAL AND INITIAL NODES
+
+        //only needed if information missing from heuristic file
         graph.getNode(goal).setHeuristic( GOAL_HEURISTIC );
 
-        // ADD THE FIRST NODE INTO THE QUEUE + SET ITS INITIAL PARAMETERS
         Node goalNode = graph.getNode(goal);
         Node initNode = graph.getNode(initial);
+        //add first node into queue and set initial parameters
         initNode.setDepth( INITIAL_DEPTH );
         initNode.setFN( initNode.getHeuristic() );
         frontier.addFirst( initNode );
@@ -134,16 +134,17 @@ public class Search
 
         while ( !done )
         {
+            //simple count of how many iterations we perform
             count++;
 
-            // IF THE QUEUE IS EMPTY, NO SOLUTION IS POSSIBLE
+            //if frontier is empty, no solutions are possible
             if ( frontier.isEmpty() )
             {
                 System.out.println("FAILURE: NO SOLUTION, ALL PATHS EXPLORED");
                 System.out.println( "\tITERATIONS: " + count );
                 return null;
             }
-            // IF THE ROOT NODE IS INIFINITY, NO PATHS EXIST
+            //if root is infinity, no solutions are possible
             if ( initNode.getFN() == ( Double.POSITIVE_INFINITY ) )
             {
                 System.out.println("FAILURE: NO SOLUTION, ROOT IS INFINITY");
@@ -151,15 +152,14 @@ public class Search
                 return null;
             }
 
-            // PRINT FRONTIER + LEAF NODES LISTS
-            //printSMAStar( frontier, leafNodes );
+            printSMAStar( frontier, leafNodes );
 
-            // GET THE BEST NODE - LOWEST f-COST AND HIGHEST DEPTH
+            //get the best node to open - lowest f(n) cost, highest depth
             Collections.sort( frontier, Node.NodeComparatorAStar );
             Node front = frontier.peekFirst();
             front.setVisited();
 
-            // THE GOAL TEST
+            //goal test
             if ( front == goalNode )
             {
                 System.out.println("SUCCESS: SOLUTION FOUND");
@@ -167,7 +167,7 @@ public class Search
                 break;
             }
 
-            // MEMORY IS FULL SO WE ROLLBACK THE WORST OF THE LEAF NODES
+            //memory is full, rollback the worst leaf node
             if ( frontier.size() >= numNodes )
             {
                 Collections.sort( leafNodes, Node.NodeComparatorAStar );
@@ -176,9 +176,9 @@ public class Search
                 isParentLeaf( worst.getParent(), leafNodes );
             }
 
-            // GET THE NEXT POSSIBLE CHILD FROM THE FRONT NODE
+            //get the next child to consider from the current best node
             Node succ = front.getNextChild();
-            // WHILE MORE CHILDREN, AND THE CHILD IS IN THE PATH OR THE FRONTIER, SKIP
+            //skip until we find a child we want essentially
             while ( ( succ != null ) && ( ( front.inPath( succ ) ) || ( frontier.contains( succ ) ) ) )
             {
                 if ( frontier.contains( succ ) )
@@ -187,26 +187,27 @@ public class Search
                 succ = front.getNextChild();
             }
 
-            // A VALID CHILD EXISTS, LETS EXPLORE IT
+            //a valid child exists
             if ( succ != null )
             {
-                // PARENT NO LONGER A LEAF
+                //parent is no longer a leafNode
                 leafNodes.remove(front);
                 leafNodes.add(succ);
 
-                // SET THE SUCCESSOR VALUES
+                //set the successor values
                 System.out.println("VISIT SUCCESSOR: " + succ.getName() );
                 setSuccessor( succ, front );
 
-                // IF DEPTH IS TOO LARGE WE ROLL BACK THE CURRENT FRONT LEAF NODE, ITS USELESS
+                //if depth too great, we rollback and set f(n) to infinity
                 if ( succ.getDepth() >= numNodes )
                 {
-                    // SET TO INFINITY SO ITS ALWAYS CULLED FIRST
+                    //set to infinity to ensure its always culled first
                     succ.setFN(Double.POSITIVE_INFINITY);
                     leafNodes.remove(succ);
                     backup(succ, frontier);
                     isParentLeaf( front, leafNodes );
 
+                    //another goal test here before we explore from the frontier
                     if ( succ == goalNode )
                     {
                         System.out.println("SUCCESS: SOLUTION FOUND");
@@ -215,11 +216,11 @@ public class Search
                         break;
                     }
                 }
-                // IF VALID, ADD TO THE FRONTIER
+                //add the new child into the open list (the frontier)
                 else
                     frontier.addLast(succ);
             }
-            // NO CHILDREN, RESET ITERATOR AND UPDATE f(n) = BEST
+            //if no children, we reset f(n) to the best of all the children
             if ( !front.hasNextChild() )
                 front.reset();
         }
@@ -229,6 +230,9 @@ public class Search
     }
 
 //---------------------------------------------------------------------------
+    //NAME: backup()
+    //IMPORT backupNode (Node), frontier (LinkedList<Node>)
+    //PURPOSE: Rollback a node, removing it from the frontier
 
     private static void backup( Node backupNode, LinkedList<Node> frontier )
     {
@@ -241,6 +245,9 @@ public class Search
     }
 
 //---------------------------------------------------------------------------
+    //NAME: setSuccessor()
+    //IMPORT: succ (node), parent (Node)
+    //PURPOSE: Set a node to be a successor of its parent
 
     private static void setSuccessor( Node succ, Node parent )
     {
@@ -256,7 +263,7 @@ public class Search
 //---------------------------------------------------------------------------
     //NAME: isParentLeaf()
     //IMPORT: parent (Node), leafNodes (LinkedList<Node>)
-    //PURPOSE:
+    //PURPOSE: Check if a parent node is a leaf, set it if it is
 
     private static void isParentLeaf( Node parent, LinkedList<Node> leafNodes )
     {

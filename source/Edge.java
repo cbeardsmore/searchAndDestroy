@@ -7,8 +7,6 @@
 *   REQUIRES: NONE
 ***************************************************************************/
 
-import java.util.List;
-
 public class Edge
 {
     //CLASSFIELDS

@@ -4,15 +4,15 @@
 *	UNIT: AMI300
 *	PURPOSE: Performs an informed beam search on given graph file
 *   LAST MOD: 14/05/17
-*   REQUIRES: Scanner, List
+*   REQUIRES: List, LinkedList
 ***************************************************************************/
 
-import java.util.Scanner;
 import java.util.List;
 import java.util.LinkedList;
 
 public class BeamSearch
 {
+    //CONSTANTS
     public static final int ARG_NUM = 6;
     public static final String YES = "y";
     public static final String NO = "n";

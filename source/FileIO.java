@@ -4,7 +4,7 @@
 *	UNIT: AMI300
 *	PURPOSE: Methods to read in and write out a graph
 *   LAST MOD: 13/04/07
-*   REQUIRES: java.io
+*   REQUIRES: java.io, Scanner
 ***************************************************************************/
 
 import java.io.*;

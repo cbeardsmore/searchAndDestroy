@@ -3,16 +3,16 @@
 *	AUTHOR: Connor Beardsmore - 15504319
 *	UNIT: AMI300
 *	PURPOSE: Performs a memory limited A* search on given graph file
-*   LAST MOD: 09/05/17
-*   REQUIRES: Scanner, List
+*   LAST MOD: 29/04/17
+*   REQUIRES: List, LinkedList
 ***************************************************************************/
 
-import java.util.Scanner;
 import java.util.List;
 import java.util.LinkedList;
 
 public class AlimSearch
 {
+    //CONSTANTS
     public static final int ARGS = 6;
 
 //---------------------------------------------------------------------------
@@ -27,7 +27,7 @@ public class AlimSearch
             System.exit(1);
         }
 
-        // RENAME ARGS FOR SIMPLICITY
+        //rename args for simplicity
         List<List<String>> paths = new LinkedList<>();
         String initial = args[0];
         String goal = args[1];
@@ -35,7 +35,7 @@ public class AlimSearch
         String hFile = args[3];
         int numNodes = 0;
 
-        // PARSE k TO ENSURE VALIDITY
+        //parse numNodes to ensure valid int
         try
         {
             numNodes = Integer.parseInt( args[4] );
@@ -47,11 +47,11 @@ public class AlimSearch
             System.exit(1);
         }
 
-        // CREATE OBJECT STRUCTURES
+        //create object structures
         Graph graph = new Graph();
         FileIO fileReader = new FileIO( graph );
 
-        // READ IN GRAPH + HEURISTIC FILES
+        //read in graph and heuristic files
         try
         {
             fileReader.readFiles( gFile, hFile );
@@ -63,7 +63,7 @@ public class AlimSearch
             System.exit(1);
         }
 
-        // PERFROM THE ACTUAL ALIM SEARCH, CHECKING FOR ERRORS
+        //perform the actual alimsearch, checking for errors
         try
         {
             paths = Search.alimSearch( graph, initial, goal, numNodes );
@@ -71,25 +71,29 @@ public class AlimSearch
         catch ( Exception e)
         {
             System.err.println("ERROR PERFORMING SEARCH:");
-            //System.err.println( e.getMessage() );
-            e.printStackTrace();
+            System.err.println( e.getMessage() );
             System.exit(1);
         }
 
-        // DO STUFF WITH THE FINAL PATHS
+        //print the final paths + summary
         printSummary( graph, initial, goal, numNodes );
         if ( paths != null )
             Search.printPaths( paths, goal );
     }
 
 //---------------------------------------------------------------------------
+    //NAME: printSummary()
+    //IMPORT: graph (Graph), initial (String), goal (String), numNodes (int)
+    //PURPOSE: Print search summary block
 
-    public static void printSummary( Graph graph, String initial, String goal, int k )
+    public static void printSummary( Graph graph, String initial, String goal, int numNodes )
     {
         System.out.println("\n----------ALIM SEARCH----------");
         System.out.println("INITIAL NODE IS: " + initial);
         System.out.println("   GOAL NODE IS: " + goal);
-        System.out.println("   MEMORY NODES: " + k + "\n");
+        System.out.println("   MEMORY NODES: " + numNodes);
+        System.out.println("-------------------------------");
+
     }
 
 //---------------------------------------------------------------------------

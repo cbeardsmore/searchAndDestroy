@@ -1,10 +1,20 @@
 #/bin/bash
 
+#/***************************************************************************
+#	FILE: alim-search
+#	AUTHOR: Connor Beardsmore - 15504319
+#	UNIT: AMI300
+#	PURPOSE: Script to provide AlimSearch its initial parameters
+#   LAST MOD: 29/04/07
+#***************************************************************************/
+
 init=1
-goal=5000
-gfile=./graphs/gg_10000x10000.al
-hfile=./graphs/gg_10000x10000.heu
-memory=6
+goal=15
+gfile=./graphs/graphPrac.txt
+hfile=./graphs/heuristicPrac.txt
+memory=15
 museum=n
 
 java AlimSearch $init $goal $gfile $hfile $memory $museum
+
+#***************************************************************************/

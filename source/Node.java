@@ -4,7 +4,7 @@
 *	UNIT: AMI300
 *	PURPOSE: Represents a single node in a graph
 *   LAST MOD: 22/04/07
-*   REQUIRES: List, LinkedList, Collections
+*   REQUIRES: List, LinkedList, Collections, Comparator
 ***************************************************************************/
 
 import java.util.List;

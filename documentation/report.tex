@@ -16,6 +16,10 @@
 \usepackage{pdfpages}
 \usepackage[style=chicago-authordate,backend=biber]{biblatex}
 
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amssymb}
+
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{Connor Beardsmore - 15504319}
@@ -70,12 +74,11 @@
 \vspace*{0.8cm}
 \subsection*{Design Decisions}
 
-sdsdsdsd
+The informed beam search is a non-complete and non-optimal search technique based on a admissible heuristic measure. The cost of each node is determines as $f(n)=h(n)$, thus the decision of which nodes to expand is based solely on heuristic cost. The algorithm tracks up to $k$ beams or paths at each step. Each further step expands all children nodes from these beams and expands the best $k$ choices.
 
-\vspace*{0.8cm}
 \subsection*{Problems and Bugs}
 
-dsdsaddas
+communication between nodes, paths that end up converged, continuing after goal, beams that die etc.
 
 \pagebreak
 
@@ -86,12 +89,11 @@ dsdsaddas
 \vspace*{0.8cm}
 \subsection*{Design Decisions}
 
-sdsdsdsd
+The simplified memory limited A* search (SMA*) is an extensible to pure memory bounded A* search, designed by Stuart Russell (\cite{russell_paper}). It provides a more memory efficient form of the regular A* search by placing a cap on the number of nodes in memory at anytime. Like A* search, the evaluation function for a given node is defined as $f(n)=g(n)+h(n)$, thus being the sum of accumulated path cost and heuristic cost. It will produce the optimal solution given an admissible and consistent heuristic (\cite{norvig}).
 
-\vspace*{0.8cm}
 \subsection*{Problems and Bugs}
 
-sdsdsdsad
+bookkeeping, what data structures used, issues with looping, duplicate nodes, continuing etc, how bad the regular pseudocode is ( removing parent from memory etc)
 
 %-------------------------------------------------------------------------------   
 % REFERENCES
