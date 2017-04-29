@@ -12,7 +12,7 @@ init=1
 goal=21
 gfile=./graphs/g1.al
 hfile=./graphs/g1.heu
-memory=7
+memory=50
 museum=n
 
 java AlimSearch $init $goal $gfile $hfile $memory $museum

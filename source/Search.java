@@ -158,7 +158,7 @@ public class Search
                 return null;
             }
 
-            printSMAStar( frontier, leafNodes );
+            //printSMAStar( frontier, leafNodes );
 
             //get the best node to open - lowest f(n) cost, highest depth
             Collections.sort( frontier, Node.NodeComparatorAStar );
@@ -169,7 +169,10 @@ public class Search
             if ( front == goalNode )
             {
                 System.out.println("SUCCESS: SOLUTION FOUND");
+                leafNodes.remove( front );
                 paths.add( createPath( goalNode ) );
+                for ( Node next : leafNodes )
+                    paths.add( createPath( next ) );
                 break;
             }
 
@@ -218,7 +221,11 @@ public class Search
                     {
                         System.out.println("SUCCESS: SOLUTION FOUND");
                         System.out.println( "\tITERATIONS: " + count );
+                        leafNodes.remove( front );
                         paths.add( createPath( goalNode ) );
+                        //print partial paths when solution found
+                        for ( Node next : leafNodes )
+                            paths.add( createPath( next ) );
                         break;
                     }
                 }
