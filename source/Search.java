@@ -219,9 +219,8 @@ public class Search
                     //another goal test here before we explore from the frontier
                     if ( succ == goalNode )
                     {
-                        System.out.println("SUCCESS: SOLUTION FOUND");
+                        System.out.println("SUCCESS: SOLUTION FOUND (MAX DEPTH)");
                         System.out.println( "\tITERATIONS: " + count );
-                        leafNodes.remove( front );
                         paths.add( createPath( goalNode ) );
                         //print partial paths when solution found
                         for ( Node next : leafNodes )
