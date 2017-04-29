@@ -8,11 +8,11 @@
 #   LAST MOD: 29/04/07
 #***************************************************************************/
 
-init=1
-goal=50
-gfile=./graphs/gg_100x100.al
-hfile=./graphs/gg_100x100.heu
-memory=13
+init=A
+goal=G
+gfile=./graphs/graphF3.txt
+hfile=./graphs/heuristicF3.txt
+memory=50
 
 java AlimSearch $init $goal $gfile $hfile $memory
 

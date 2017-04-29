@@ -154,12 +154,15 @@ public class Search
             //if root is infinity, no solutions are possible
             if ( initNode.getFN() == ( Double.POSITIVE_INFINITY ) )
             {
+                //solution was found earlier
+                if ( bound > 0 )
+                    return paths;
                 System.out.println("FAILURE: NO SOLUTION, ROOT IS INFINITY");
                 System.out.println( "\tITERATIONS: " + count );
                 return null;
             }
 
-            printSMAStar( frontier, leafNodes );
+            //printSMAStar( frontier, leafNodes );
 
             //get the best node to open - lowest f(n) cost, highest depth
             Collections.sort( frontier, Node.NodeComparatorAStar );
@@ -167,7 +170,10 @@ public class Search
             front.setVisited();
 
             if ( ( bound > 0 ) && ( front.getFN() > bound ) )
+            {
+                System.out.println( "\tITERATIONS: " + count );
                 return paths;
+            }
 
             //memory is full, rollback the worst leaf node
             if ( frontier.size() >= numNodes )
