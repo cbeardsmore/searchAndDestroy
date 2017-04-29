@@ -201,6 +201,12 @@ public class Search
                         bound = goalNode.getCost();
                     else if ( goalNode.getCost() > bound )
                         return paths;
+                    //the first solution found is NOT always the most optimal
+                    else
+                    {
+                        bound = goalNode.getCost();
+                        paths.clear();
+                    }
                     front.removeNode( goalNode );
                     goalReached( succ, leafNodes, paths );
                 }
