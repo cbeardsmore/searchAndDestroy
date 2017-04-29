@@ -13,7 +13,7 @@ import java.util.LinkedList;
 public class AlimSearch
 {
     //CONSTANTS
-    public static final int ARGS = 6;
+    public static final int ARGS = 5;
 
 //---------------------------------------------------------------------------
 

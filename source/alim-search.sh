@@ -9,12 +9,11 @@
 #***************************************************************************/
 
 init=1
-goal=15
-gfile=./graphs/graphPrac.txt
-hfile=./graphs/heuristicPrac.txt
-memory=8
-museum=n
+goal=50
+gfile=./graphs/gg_100x100.al
+hfile=./graphs/gg_100x100.heu
+memory=13
 
-java AlimSearch $init $goal $gfile $hfile $memory $museum
+java AlimSearch $init $goal $gfile $hfile $memory
 
 #***************************************************************************/
