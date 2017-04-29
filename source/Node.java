@@ -82,6 +82,18 @@ public class Node implements Comparable<Node>
     }
 
 //---------------------------------------------------------------------------
+    //NAME: removeNode()
+    //IMPORT: inNode(node)
+    //PURPOSE: Add new node into the current node list
+
+    public void removeNode(Node inNode)
+    {
+        nodeList.remove( inNode );
+        childCounter--;
+        Collections.sort(nodeList);
+    }
+
+//---------------------------------------------------------------------------
     //NAME: addEdge()
     //IMPORT: inEdge (Edge)
     //PURPOSE: Add edge into the current edge list and fix dependencies

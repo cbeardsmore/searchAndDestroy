@@ -123,6 +123,7 @@ public class Search
         LinkedList<Node> leafNodes = new LinkedList<>();
         boolean done = false;
         int count = 0;
+        double bound = -1.0;
 
         //ensure all fields are valid
         validateFields( graph, initial, goal, numNodes );
@@ -165,12 +166,8 @@ public class Search
             Node front = frontier.peekFirst();
             front.setVisited();
 
-            //goal test
-            if ( front == goalNode )
-            {
-                goalReached( front, leafNodes, paths );
-                break;
-            }
+            if ( ( bound > 0 ) && ( front.getFN() > bound ) )
+                return paths;
 
             //memory is full, rollback the worst leaf node
             if ( frontier.size() >= numNodes )
@@ -184,8 +181,24 @@ public class Search
             //get the next child to consider from the current best node
             Node succ = front.getNextChild();
             //skip until we find a child we want essentially
-            while ( ( succ != null ) && ( ( front.inPath( succ ) ) || ( frontier.contains( succ ) ) ) )
+            while ( ( succ != null ) && ( ( front.inPath( succ ) ) || ( frontier.contains( succ )
+                            || ( succ == goalNode ) ) ) )
             {
+                //another goal test here before we explore from the frontier
+                if ( succ == goalNode )
+                {
+                    goalNode.setParent( front );
+                    double cost = front.getCost() + front.getEdgeCost( goalNode );
+                    goalNode.setCost( cost );
+
+                    if ( bound < 0.0 )
+                        bound = goalNode.getCost();
+                    else if ( goalNode.getCost() > bound )
+                        return paths;
+                    front.removeNode( goalNode );
+                    goalReached( succ, leafNodes, paths );
+                }
+
                 if ( frontier.contains( succ ) )
                     if ( succ.getParent() != null )
                         succ.getParent().setBestChild();
@@ -211,13 +224,6 @@ public class Search
                     leafNodes.remove(succ);
                     backup(succ, frontier);
                     isParentLeaf( front, leafNodes );
-
-                    //another goal test here before we explore from the frontier
-                    if ( succ == goalNode )
-                    {
-                        goalReached( succ, leafNodes, paths );
-                        break;
-                    }
                 }
                 //add the new child into the open list (the frontier)
                 else
@@ -241,7 +247,6 @@ public class Search
                                                    List<List<String>> paths)
     {
         System.out.println("SUCCESS: SOLUTION FOUND");
-        leafNodes.remove( goalNode );
         paths.add( createPath( goalNode ) );
         for ( Node next : leafNodes )
             paths.add( createPath( next ) );

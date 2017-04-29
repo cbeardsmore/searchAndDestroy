@@ -72,6 +72,7 @@ public class AlimSearch
         {
             System.err.println("ERROR PERFORMING SEARCH:");
             System.err.println( e.getMessage() );
+            e.printStackTrace();
             System.exit(1);
         }
 
