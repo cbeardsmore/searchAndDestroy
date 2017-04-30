@@ -8,11 +8,11 @@
 #   LAST MOD: 29/04/07
 #***************************************************************************/
 
-init=A
-goal=G
-gfile=./graphs/graphF1.txt
-hfile=./graphs/heuristicF1.txt
-beam=3
+init=1
+goal=5000
+gfile=./graphs/gg_10000x10000.al
+hfile=./graphs/gg_10000x10000.heu
+beam=10
 museum=y
 
 java BeamSearch $init $goal $gfile $hfile $beam $museum

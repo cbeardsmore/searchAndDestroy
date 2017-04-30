@@ -88,6 +88,12 @@ The beams in the search technique do not communicate, they progress independentl
 
 Before improvements were applied, the list of partial paths stored when a solution is discovered was not being correctly stored. Similarly to other issues, this was resolved by creating a deep copy of the beam before it was modified to allow for partial paths to be displayed if required.\\
 
+\subsection*{Testing and Efficiency}
+
+Testing was performed on the algorithm with a number of graph files. These include the Romania graph from \cite{norvig}, the graphs from the tutorial sessions and script generated graphs and heuristics of up to 5000 nodes. Beam values of between 1 and 20 were also tested to ensure no failure of the implementation.\\
+
+On the graph of 5000 nodes, 250,000 edges and a beam width of 3, the algorithm takes 2.1 seconds to find a solution path of depth 26 deep. To extend the algorithm to continue to find alternate paths, the time complexity scales poorly to 50.6 seconds. Alteration of the beam width did not have a significant impact on the time complexity to find a singular solution. However, while continuing to search for alternate solutions, the time scales exponentially as the beam width increases as is expected as more of the graph is explored.
+
 \pagebreak
 
 \begin{center}
@@ -97,11 +103,23 @@ Before improvements were applied, the list of partial paths stored when a soluti
 \vspace*{0.8cm}
 \subsection*{Design Decisions}
 
-The simplified memory limited A* search (SMA*) is an extensible to pure memory bounded A* search, designed by Stuart Russell (\cite{russell_paper}). It provides a more memory efficient form of the regular A* search by placing a cap on the number of nodes in memory at anytime. Like A* search, the evaluation function for a given node is defined as $f(n)=g(n)+h(n)$, thus being the sum of accumulated path cost and heuristic cost. It will produce the optimal solution given an admissible and consistent heuristic (\cite{norvig}).
+The simplified memory limited A* search (SMA*) is an extension to pure memory bounded A* search, designed by Stuart Russell (\cite{russell_paper}). It provides a more memory efficient form of the regular A* search by placing a cap on the number of nodes in memory at any one time. Like A* search, the evaluation function for a given node is defined as $f(n)=g(n)+h(n)$, thus being the sum of accumulated path cost and heuristic cost. It will produce the optimal solution given an admissible and consistent heuristic (\cite{norvig}) and solves the memory issues faced by regular A*. \\
+
+The algorithm makes use of two main data structures. The \textit{frontier} (open list) stores a list of all nodes currently stored in memory allowing the search to limit memory effectively. The \textit{leafNodes} list is a subset of the \textit{frontier} list which contains nodes that are leaves and have no children currently in the frontier. These lists are sorted by increasing $f(n)$ cost and decreasing depth. At each iteration the node to be opened will be the first in the frontier, thus the node with lowest $f(n)$ cost and highest depth. If memory is ever full, the last node in the leafNodes list will be backed-up, thus the node with highest $f(n)$ cost and shallowest depth.\\
+
+The implementation was based off the pseudo code presented in \cite{russell_paper}. This pseudo code is extremely limited and major parts withheld and thus the implementation differs significantly in some areas.
 
 \subsection*{Problems and Bugs}
 
-bookkeeping, what data structures used, issues with looping, duplicate nodes, continuing etc, how bad the regular pseudocode is ( removing parent from memory etc)
+While the underlying theory of the algorithm is relatively simple, the amount of bookkeeping required to implement it correctly is significant (\cite{norvig}). At the current state, the implementation will correctly find a solution on the vast majority of graphs. However, this solution may not be optimal. \\
+
+This issue is a result of decision made regarding duplicate nodes in the search tree. When a node is reached that is already been added to the frontier, it is skipped over and ignored. Thus, if a node is reached the first time at a path which is not optimal to that node, an optimal solution may never be visited in the tree. This does not alter the algorithms completeness but does alter its optimality in certain graphs.\\
+
+Other problems were faced during implementation but were resolved to ensure the algorithms solutions were not effected. The main issues were faced around backing up nodes and updating the value in the parent that stores its best child. This information must be propagated up the entire tree to ensure the values or consistent with what has been observed. Attempting this recursively caused issues with looping and thus, a simple approach to back the cost whenever a node is removed worked.
+
+\subsection*{Testing and Efficiency}
+
+The algorithm was tested utilizing the same graphs as for beam search. An implementation of regular A* was also utilized to compare the paths for optimality.
 
 %-------------------------------------------------------------------------------   
 % REFERENCES
