@@ -12,7 +12,7 @@ import java.util.*;
 public class Search
 {
     //CONSTANTS
-    public static final int MIN_BEAM = 0;
+    public static final int MIN_BEAM = 1;
     public static final int MAX_BEAM = 10000;
     public static final int INITIAL_DEPTH = 1;
     public static final int GOAL_HEURISTIC = 0;
@@ -197,12 +197,11 @@ public class Search
                     double cost = front.getCost() + front.getEdgeCost( goalNode );
                     goalNode.setCost( cost );
 
+                    //set the initial solution bound
                     if ( bound < 0.0 )
                         bound = goalNode.getCost();
-                    else if ( goalNode.getCost() > bound )
-                        return paths;
                     //the first solution found is NOT always the most optimal
-                    else
+                    else if ( goalNode.getCost() < bound )
                     {
                         bound = goalNode.getCost();
                         paths.clear();
@@ -275,6 +274,8 @@ public class Search
         // BACK UP ITS fn COST TO ITS PARENTS BEST COST
         if ( backupNode.getParent() != null )
             backupNode.getParent().setBestChild();
+        else
+            throw new IllegalArgumentException("CAN'T BACKUP INIT NODE");
         // REMOVE IT FROM THE FRONTIER
         frontier.remove( backupNode );
     }
@@ -304,7 +305,6 @@ public class Search
     {
         //if there are none of my children in leafNodes, i am now a leaf
         for ( Node next : leafNodes )
-            //if ( next.getParent() == parent )
             if ( next.inPath( parent ) )
                 return;
 
