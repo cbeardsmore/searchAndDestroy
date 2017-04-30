@@ -74,11 +74,19 @@
 \vspace*{0.8cm}
 \subsection*{Design Decisions}
 
-The informed beam search is a non-complete and non-optimal search technique based on a admissible heuristic measure. The cost of each node is determines as $f(n)=h(n)$, thus the decision of which nodes to expand is based solely on heuristic cost. The algorithm tracks up to $k$ beams or paths at each step. Each further step expands all children nodes from these beams and expands the best $k$ choices.
+The informed beam search is a non-complete and non-optimal search technique based on an admissible heuristic measure. The cost of each node is determined as $f(n)=h(n)$, thus the decision of which nodes to expand is based solely on heuristic cost. The algorithm tracks up to $k$ beams or paths at each step. Each further step expands all children nodes from these beams and expands the best $k$ choices. Informed beam searches sacrifices optimality and completeness for increased memory efficiency and speed (\cite{winston}).\\
+
+The algorithm implemented utilizes a priority queue for both the \textit{beam} and the \textit{frontier} data structures, sorted via heuristic cost. The \textit{beam} represents the current nodes in the $k$ beams while the \textit{frontier} stores all children of every node in the beams. At each level the frontier is trimmed to $k$ length to allow the best $k$ choices to be chosen. After this stage, the beam is replaced by the frontier and the process repeats until a solution is found, or no valid paths can be explored. \\
+
+The algorithm allows for the discovery of alternate paths after an initial solution is discovered. Once the goal node is discovered in the frontier, the path is stored and the goal removed from the frontier to allow the beams to continue as if the goal was never discovered.
 
 \subsection*{Problems and Bugs}
 
-communication between nodes, paths that end up converged, continuing after goal, beams that die etc.
+Several issues were faced during the implementation and testing of the algorithm. However, these issues were effectively resolved and the algorithm currently has no known issues or bugs resulting in errors.\\
+
+The beams in the search technique do not communicate, they progress independently. Initially, the beams were communicating via comparing successors as they were added to the frontier. This fault was simply resolved by not adding duplicate nodes to the frontier at any stage. Two beams can effectively converge at the same node whilst having different paths to reach that node. Initially, nodes were not being duplicated and paths were being overwritten and lost. To solve this problem, nodes were duplicated to save their specific individual paths to allow for beams to converge upon the same nodes.\\
+
+Before improvements were applied, the list of partial paths stored when a solution is discovered was not being correctly stored. Similarly to other issues, this was resolved by creating a deep copy of the beam before it was modified to allow for partial paths to be displayed if required.\\
 
 \pagebreak
 

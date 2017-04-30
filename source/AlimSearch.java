@@ -58,6 +58,7 @@ public class AlimSearch
         }
         catch ( Exception e )
         {
+            e.printStackTrace();
             System.err.println("ERROR READING FILE:");
             System.err.println( e.getMessage() );
             System.exit(1);
