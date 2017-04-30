@@ -162,7 +162,7 @@ public class Search
                 return null;
             }
 
-            //printSMAStar( frontier, leafNodes );
+            printSMAStar( frontier, leafNodes );
 
             //get the best node to open - lowest f(n) cost, highest depth
             Collections.sort( frontier, Node.NodeComparatorAStar );
@@ -211,9 +211,9 @@ public class Search
                     goalReached( succ, leafNodes, paths );
                 }
 
-                if ( frontier.contains( succ ) )
-                    if ( succ.getParent() != null )
-                        succ.getParent().setBestChild();
+                //if ( frontier.contains( succ ) )
+                //    if ( succ.getParent() != null )
+                //        succ.getParent().setBestChild();
                 succ = front.getNextChild();
             }
 

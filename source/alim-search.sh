@@ -9,10 +9,10 @@
 #***************************************************************************/
 
 init=1
-goal=5000
-gfile=./graphs/gg_10000x10000.al2
-hfile=./graphs/gg_10000x10000.heu2
-memory=9
+goal=50
+gfile=./graphs/gg_100x100.al
+hfile=./graphs/gg_100x100.heu
+memory=10
 
 java AlimSearch $init $goal $gfile $hfile $memory
 
