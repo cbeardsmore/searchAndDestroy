@@ -23,7 +23,7 @@ public class AlimSearch
         if ( args.length != ARGS )
         {
             System.err.print("\nUSAGE: java AlimSearch <initial> <goal> <graphfile>");
-            System.err.print("<heuristicfile> <numNodes> <y/n for museum>\n");
+            System.err.print("<heuristicfile> <numNodes>\n");
             System.exit(1);
         }
 

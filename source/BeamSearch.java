@@ -72,7 +72,6 @@ public class BeamSearch
         {
             System.err.println("ERROR READING FILE:");
             System.err.println( e.getMessage() );
-            //e.printStackTrace();
             System.exit(1);
         }
 

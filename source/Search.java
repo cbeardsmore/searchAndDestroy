@@ -303,7 +303,7 @@ public class Search
 
     private static void isParentLeaf( Node parent, LinkedList<Node> leafNodes )
     {
-        //if there are none of my children in leafNodes, i am now a leaf
+        //if there are none of my children in leafNodes, now a leaf
         for ( Node next : leafNodes )
             if ( next.inPath( parent ) )
                 return;
