@@ -34,27 +34,20 @@ public class FileIO
     //IMPORT: gFilename (String), hFilename (String)
     //PURPOSE: Read in graph and heuristic files
 
-    public void readFiles( String gFilename, String hFilename )
+    public void readFiles( String gFilename, String hFilename ) throws FileNotFoundException
     {
         //open files
         File gFile = new File( gFilename );
         File hFile = new File( hFilename );
 
-        try
-        {
-            //parse each line of the GRAPH file
-            Scanner gScan = new Scanner( gFile );
-            while ( gScan.hasNextLine() )
-                parseLine( gScan.nextLine() );
-            //parse each line of the HEURISTIC file
-            Scanner fScan = new Scanner( hFile );
-            while ( fScan.hasNextLine() )
-                parseHeuristic( fScan.nextLine() );
-        }
-        catch ( FileNotFoundException e )
-        {
-            e.printStackTrace();
-        }
+        //parse each line of the GRAPH file
+        Scanner gScan = new Scanner( gFile );
+        while ( gScan.hasNextLine() )
+            parseLine( gScan.nextLine() );
+        //parse each line of the HEURISTIC file
+        Scanner fScan = new Scanner( hFile );
+        while ( fScan.hasNextLine() )
+            parseHeuristic( fScan.nextLine() );
     }
 
 //---------------------------------------------------------------------------

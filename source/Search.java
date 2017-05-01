@@ -162,7 +162,7 @@ public class Search
                 return null;
             }
 
-            //printSMAStar( frontier, leafNodes );
+            printSMAStar( frontier, leafNodes );
 
             //get the best node to open - lowest f(n) cost, highest depth
             Collections.sort( frontier, Node.NodeComparatorAStar );
@@ -322,9 +322,9 @@ public class Search
         printCollection( "FRONTIER: ", frontier );
         printCollection( "LEAF NODES: ", leafNodes );
         System.out.println("-------------------------------");
-        for ( Node next : frontier )
-            if ( next != null )
-                System.out.println( next.toString() );
+        //for ( Node next : frontier )
+        //    if ( next != null )
+        //        System.out.println( next.toString() );
         System.out.println("-------------------------------");
     }
 

@@ -9,10 +9,10 @@
 #***************************************************************************/
 
 init=1
-goal=5000
-gfile=./graphs/gg_10000x10000.al
-hfile=./graphs/gg_10000x10000.heu
-beam=10
+goal=21
+gfile=./graphs/g1.al
+hfile=./graphs/g1.heu
+beam=2
 museum=y
 
 java BeamSearch $init $goal $gfile $hfile $beam $museum

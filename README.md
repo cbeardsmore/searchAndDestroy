@@ -13,7 +13,7 @@ Implementation of both Beam Informed search and Memory Bounded A* search
 Run the script named with the following parameters:
 
 ```
-beam-search <initial node> <goal node> <graph file> <k>
+./beam-search
 ```
 
 
@@ -22,7 +22,7 @@ beam-search <initial node> <goal node> <graph file> <k>
 Run the script named with the following parameters:
 
 ```
-alim-search <initial node> <goal node> <graph file>
+./alim-search
 ```
 
 ##### File List

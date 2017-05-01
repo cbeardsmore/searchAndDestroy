@@ -8,11 +8,12 @@
 #   LAST MOD: 29/04/07
 #***************************************************************************/
 
-init=1
-goal=5000
-gfile=./graphs/gg_10000x10000.al
-hfile=./graphs/gg_10000x10000.heu
-memory=100
+init=Arad
+goal=Bucharest
+gfile=./graphs/graphRomania.txt
+hfile=./graphs/heuristicRomania.txt
+memory=10
+debug=true
 
 java AlimSearch $init $goal $gfile $hfile $memory
 
