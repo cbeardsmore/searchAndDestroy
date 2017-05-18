@@ -13,7 +13,7 @@ Implementation of both Beam Informed search and Memory Bounded A* search
 Run the script named with the following parameters:
 
 ```
-./beam-search
+./beam-search <init> <goal> <graph_file> <heuristic_file> <beams> <museum_flag>
 ```
 
 
@@ -22,13 +22,12 @@ Run the script named with the following parameters:
 Run the script named with the following parameters:
 
 ```
-./alim-search
+./alim-search <init> <goal> <graph_file> <heuristic_file> <mem_limit>
 ```
 
 ##### File List
 
 ```
-./documentation - project report 
 ./graphs - test graph files
 ./source - all source code 
 ```
