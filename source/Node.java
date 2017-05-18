@@ -107,7 +107,7 @@ public class Node implements Comparable<Node>
         //ignore duplicates
         if ( ( nodeList.contains(source) ) || ( nodeList.contains(sink) ) )
             return;
-            
+
         //add connectred node dependencies
         if ( sink.getName().equals(name) )
             nodeList.add( source );
