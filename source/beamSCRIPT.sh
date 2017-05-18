@@ -15,6 +15,6 @@ hfile=./graphs/g1.heu
 beam=2
 museum=y
 
-./beam-search.sh $init $goal $gfile $hfile $beam $museum
+./beam-search $init $goal $gfile $hfile $beam $museum
 
 #***************************************************************************/

@@ -14,6 +14,6 @@ gfile=./graphs/graphRomania.txt
 hfile=./graphs/heuristicRomania.txt
 memory=10
 
-./alim-search.sh $init $goal $gfile $hfile $memory
+./alim-search $init $goal $gfile $hfile $memory
 
 #***************************************************************************/
